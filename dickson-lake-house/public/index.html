@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>The Dickson Lake House &mdash; Middle Straits Lake</title>
+<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Caveat:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+
+:root {
+  --lake: #1b6b8a;
+  --lake-deep: #0e4257;
+  --lake-light: #3da5c2;
+  --lake-pale: #d4ecf5;
+  --lake-whisper: #f0f8fb;
+  --sunset: #f2845e;
+  --sunset-warm: #f6a96c;
+  --sunset-hot: #e85d3a;
+  --sand: #f5e6c8;
+  --sand-light: #faf3e6;
+  --pine: #2d6b4a;
+  --pine-light: #4a9e6f;
+  --dock: #6b5240;
+  --text: #1e2d35;
+  --text-light: #5a727d;
+  --white: #ffffff;
+}
+
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Source Sans 3', sans-serif;
+  color: var(--text);
+  background: var(--white);
+  overflow-x: hidden;
+  line-height: 1.7;
+}
+
+/* ===== NAV ===== */
+nav {
+  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
+  background: rgba(255,255,255,0.92);
+  backdrop-filter: blur(12px);
+  border-bottom: 2px solid var(--lake-pale);
+  transition: box-shadow 0.3s;
+}
+nav.scrolled { box-shadow: 0 4px 24px rgba(27,107,138,0.1); }
+.nav-inner {
+  max-width: 1200px; margin: 0 auto; padding: 14px 24px;
+  display: flex; align-items: center; justify-content: space-between;
+}
+.nav-logo {
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.25rem;
+  color: var(--lake); display: flex; align-items: center; gap: 8px; text-decoration: none;
+}
+.nav-logo .wave-icon { font-size: 1.5rem; }
+.nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
+.nav-links a {
+  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.85rem;
+  color: var(--lake-deep); text-decoration: none; padding: 6px 12px;
+  border-radius: 24px; transition: all 0.2s;
+}
+.nav-links a:hover { background: var(--lake-pale); color: var(--lake); }
+
+/* ===== HERO ===== */
+.hero {
+  min-height: 100vh; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; text-align: center;
+  position: relative; overflow: hidden;
+  background: linear-gradient(170deg, #d4ecf5 0%, #a8d8ea 25%, #5eb8d4 50%, #3897b5 70%, #1b6b8a 100%);
+}
+.hero::before {
+  content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 120px;
+  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,120 720,0 1080,60 C1260,90 1380,80 1440,70 L1440,120 L0,120Z' fill='%23ffffff'/%3E%3C/svg%3E") center bottom/cover no-repeat;
+  z-index: 2;
+}
+.sun {
+  position: absolute; top: 12%; right: 15%; width: 130px; height: 130px;
+  background: radial-gradient(circle, #ffe082 0%, #ffb74d 40%, rgba(255,183,77,0) 70%);
+  border-radius: 50%; animation: sunPulse 4s ease-in-out infinite;
+}
+@keyframes sunPulse { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.08);opacity:1} }
+.cloud {
+  position: absolute; background: rgba(255,255,255,0.5);
+  border-radius: 50px; animation: drift linear infinite;
+}
+.cloud::before, .cloud::after { content:''; position:absolute; background:rgba(255,255,255,0.5); border-radius:50%; }
+.cloud-1 { width:140px; height:40px; top:18%; left:-150px; animation-duration:35s; }
+.cloud-1::before { width:60px; height:60px; top:-30px; left:25px; }
+.cloud-1::after { width:45px; height:45px; top:-20px; left:70px; }
+.cloud-2 { width:100px; height:30px; top:12%; left:-100px; animation-duration:45s; animation-delay:8s; }
+.cloud-2::before { width:45px; height:45px; top:-22px; left:20px; }
+.cloud-2::after { width:35px; height:35px; top:-15px; left:50px; }
+.cloud-3 { width:120px; height:35px; top:25%; left:-120px; animation-duration:40s; animation-delay:15s; }
+.cloud-3::before { width:50px; height:50px; top:-25px; left:30px; }
+.cloud-3::after { width:40px; height:40px; top:-18px; left:65px; }
+@keyframes drift { from{transform:translateX(0)} to{transform:translateX(calc(100vw + 300px))} }
+.lake-shimmer {
+  position:absolute; bottom:100px; left:0; right:0; height:200px;
+  background:repeating-linear-gradient(90deg,transparent,rgba(255,255,255,0.08) 2px,transparent 4px);
+  animation:shimmer 3s ease-in-out infinite;
+}
+@keyframes shimmer { 0%,100%{opacity:.3} 50%{opacity:.7} }
+.hero-content { position:relative; z-index:3; padding:0 24px; }
+.hero-pre {
+  font-family:'Caveat',cursive; font-size:1.6rem; color:rgba(255,255,255,0.9);
+  margin-bottom:8px; animation:fadeUp 1s ease-out 0.2s both;
+}
+.hero-title {
+  font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(3rem,8vw,6rem);
+  color:var(--white); line-height:1.1; text-shadow:0 4px 30px rgba(14,66,87,0.3);
+  margin-bottom:12px; animation:fadeUp 1s ease-out 0.4s both;
+}
+.hero-subtitle {
+  font-family:'Lora',serif; font-style:italic; font-size:clamp(1.1rem,2.5vw,1.5rem);
+  color:rgba(255,255,255,0.9); margin-bottom:32px; animation:fadeUp 1s ease-out 0.6s both;
+}
+.hero-cta {
+  display:inline-flex; align-items:center; gap:10px; background:var(--sunset); color:white;
+  font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; padding:16px 36px;
+  border-radius:50px; text-decoration:none; transition:all 0.3s;
+  box-shadow:0 6px 24px rgba(242,132,94,0.4); animation:fadeUp 1s ease-out 0.8s both;
+}
+.hero-cta:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 10px 32px rgba(242,132,94,0.5); background:var(--sunset-hot); }
+@keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+
+/* ===== SHARED SECTION STYLES ===== */
+section { padding: 80px 24px; }
+.container { max-width: 1100px; margin: 0 auto; }
+.section-tag { font-family:'Caveat',cursive; font-size:1.3rem; color:var(--sunset); margin-bottom:4px; }
+.section-title {
+  font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(2rem,4vw,2.8rem);
+  color:var(--lake-deep); margin-bottom:16px; line-height:1.2;
+}
+.section-desc { font-size:1.1rem; color:var(--text-light); max-width:650px; margin-bottom:48px; line-height:1.8; }
+
+/* ===== WEATHER WIDGET ===== */
+.weather { background: linear-gradient(135deg, var(--lake-whisper) 0%, var(--white) 100%); }
+.weather-widget {
+  display: grid;
+  grid-template-columns: 300px 1fr;
+  gap: 24px;
+  background: white;
+  border-radius: 24px;
+  padding: 32px;
+  box-shadow: 0 4px 24px rgba(27,107,138,0.08);
+  border: 2px solid var(--lake-pale);
+  min-height: 200px;
+}
+.weather-now {
+  display: flex; flex-direction: column; align-items: center; justify-content: center;
+  text-align: center; border-right: 2px solid var(--lake-pale); padding-right: 24px;
+}
+.weather-now .w-icon { font-size: 4rem; margin-bottom: 8px; }
+.weather-now .w-temp {
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 3.5rem;
+  color: var(--lake-deep); line-height: 1;
+}
+.weather-now .w-desc {
+  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 1.1rem;
+  color: var(--text-light); margin-top: 4px;
+}
+.weather-now .w-details {
+  display: flex; gap: 16px; margin-top: 14px; font-size: 0.88rem; color: var(--text-light);
+}
+.weather-now .w-details span { display: flex; align-items: center; gap: 4px; }
+.weather-forecast {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px;
+  align-content: center;
+}
+.forecast-day {
+  text-align: center; padding: 16px 8px; border-radius: 16px;
+  background: var(--lake-whisper); transition: all 0.2s;
+}
+.forecast-day:hover { transform: translateY(-2px); background: var(--lake-pale); }
+.forecast-day .fd-name {
+  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.85rem;
+  color: var(--lake-deep); margin-bottom: 6px;
+}
+.forecast-day .fd-icon { font-size: 1.8rem; margin-bottom: 6px; }
+.forecast-day .fd-temps {
+  font-family: 'Fredoka', sans-serif; font-size: 0.9rem;
+}
+.forecast-day .fd-hi { color: var(--sunset); font-weight: 600; }
+.forecast-day .fd-lo { color: var(--text-light); font-weight: 400; }
+.weather-loading {
+  display: flex; align-items: center; justify-content: center;
+  grid-column: 1 / -1; padding: 40px;
+  font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--text-light);
+}
+.weather-error { color: var(--sunset); font-family: 'Fredoka', sans-serif; text-align: center; padding: 20px; }
+
+/* ===== ARRIVAL ===== */
+.arrival { background: var(--white); }
+.arrival-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px;
+}
+.arrival-card {
+  background: var(--sand-light); border-radius: 20px; padding: 32px;
+  border: 2px solid var(--sand); transition: all 0.3s; position: relative;
+}
+.arrival-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(107,82,64,0.08); }
+.arrival-card .card-icon { font-size: 2.5rem; margin-bottom: 16px; display: inline-block; }
+.arrival-card h3 {
+  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.3rem;
+  color: var(--lake-deep); margin-bottom: 10px;
+}
+.arrival-card p { color: var(--text-light); font-size: 0.98rem; line-height: 1.7; }
+.arrival-card .detail {
+  margin-top: 14px; padding-top: 14px; border-top: 1px dashed var(--sand);
+  font-family: 'Caveat', cursive; font-size: 1.15rem; color: var(--sunset);
+}
+.arrival-address {
+  margin-bottom: 36px; padding: 24px 32px; background: var(--lake-whisper);
+  border-radius: 16px; border-left: 5px solid var(--lake);
+  display: flex; align-items: center; gap: 16px;
+}
+.arrival-address .addr-icon { font-size: 2rem; }
+.arrival-address .addr-text h3 {
+  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.2rem; color: var(--lake-deep);
+}
+.arrival-address .addr-text p { color: var(--text-light); font-size: 0.95rem; }
+.arrival-address .addr-link {
+  margin-left: auto;
+  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem;
+  color: var(--white); background: var(--lake); padding: 10px 20px;
+  border-radius: 24px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
+}
+.arrival-address .addr-link:hover { background: var(--lake-deep); transform: translateY(-2px); }
+
+/* ===== WELCOME ===== */
+.welcome { background: var(--lake-whisper); }
+.welcome-grid {
+  display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px;
+}
+.welcome-card {
+  background: var(--white); border-radius: 20px; padding: 32px;
+  transition: all 0.3s; border: 2px solid transparent; position: relative; overflow: hidden;
+}
+.welcome-card:hover { transform: translateY(-4px); border-color: var(--lake-light); box-shadow: 0 12px 32px rgba(27,107,138,0.1); }
+.welcome-card .card-icon { font-size: 2.5rem; margin-bottom: 16px; display: inline-block; }
+.welcome-card h3 { font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.3rem; color:var(--lake-deep); margin-bottom:10px; }
+.welcome-card p { color: var(--text-light); font-size: 0.98rem; line-height: 1.7; }
+.welcome-card .detail {
+  margin-top:14px; padding-top:14px; border-top:1px dashed var(--lake-pale);
+  font-family:'Caveat',cursive; font-size:1.15rem; color:var(--sunset);
+}
+
+/* ===== HOUSE MANUAL ===== */
+.manual { background: var(--sand-light); }
+.manual-categories { display:flex; flex-wrap:wrap; gap:10px; margin-bottom:36px; }
+.manual-tab {
+  font-family:'Fredoka',sans-serif; font-weight:500; font-size:0.95rem;
+  padding:10px 22px; border-radius:30px; border:2px solid var(--lake-pale);
+  background:white; color:var(--lake-deep); cursor:pointer; transition:all 0.25s;
+}
+.manual-tab:hover, .manual-tab.active { background:var(--lake); color:white; border-color:var(--lake); }
+.manual-content { display:none; animation:fadeIn 0.4s ease-out; }
+.manual-content.active { display:block; }
+@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
+.manual-list { list-style:none; }
+.manual-list li {
+  background:white; padding:20px 24px; border-radius:14px; margin-bottom:12px;
+  display:flex; align-items:flex-start; gap:16px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.04); transition:transform 0.2s;
+}
+.manual-list li:hover { transform:translateX(4px); }
+.manual-list .li-icon { font-size:1.5rem; flex-shrink:0; margin-top:2px; }
+.manual-list .li-content h4 { font-family:'Fredoka',sans-serif; font-weight:600; color:var(--lake-deep); margin-bottom:4px; }
+.manual-list .li-content p { color:var(--text-light); font-size:0.92rem; line-height:1.6; }
+
+/* ===== LOCAL GUIDE ===== */
+.guide { background: white; }
+.guide-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(260px,1fr)); gap:20px; }
+.guide-card {
+  background:linear-gradient(145deg,var(--lake-whisper),white); border-radius:18px; padding:28px;
+  border:1.5px solid var(--lake-pale); transition:all 0.3s;
+}
+.guide-card:hover { transform:translateY(-3px); box-shadow:0 8px 24px rgba(27,107,138,0.08); }
+.guide-card .g-icon { font-size:2rem; margin-bottom:12px; }
+.guide-card h3 { font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.1rem; color:var(--lake-deep); margin-bottom:8px; }
+.guide-card p { color:var(--text-light); font-size:0.9rem; line-height:1.6; }
+.guide-card .g-tag {
+  display:inline-block; margin-top:12px; font-family:'Fredoka',sans-serif; font-weight:500;
+  font-size:0.78rem; color:var(--sunset); background:rgba(242,132,94,0.1); padding:4px 12px; border-radius:12px;
+}
+
+/* ===== PHOTO WALL ===== */
+.photos { background: var(--lake-deep); color: white; }
+.photos .section-tag { color: var(--sunset-warm); }
+.photos .section-title { color: white; }
+.photos .section-desc { color: rgba(255,255,255,0.7); }
+.photo-masonry { columns:3; column-gap:16px; }
+.photo-item {
+  break-inside:avoid; margin-bottom:16px; border-radius:14px; overflow:hidden;
+  position:relative; cursor:pointer; transition:transform 0.3s;
+}
+.photo-item:hover { transform:scale(1.02); }
+.photo-placeholder { width:100%; display:block; border-radius:14px; }
+.photo-overlay {
+  position:absolute; bottom:0; left:0; right:0; padding:16px;
+  background:linear-gradient(transparent,rgba(0,0,0,0.6)); opacity:0; transition:opacity 0.3s;
+}
+.photo-item:hover .photo-overlay { opacity:1; }
+.photo-overlay .caption { font-family:'Caveat',cursive; font-size:1.2rem; color:white; }
+.photo-overlay .date { font-size:0.8rem; color:rgba(255,255,255,0.7); margin-top:2px; }
+.photo-cta { text-align:center; margin-top:48px; }
+.photo-cta p { font-family:'Caveat',cursive; font-size:1.4rem; color:var(--sunset-warm); margin-bottom:12px; }
+
+/* ===== GUESTBOOK ===== */
+.guestbook { background: var(--sand-light); }
+.guestbook-entries {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(280px,1fr)); gap:20px; margin-bottom:40px;
+}
+.gb-entry {
+  background:white; border-radius:16px; padding:28px;
+  box-shadow:0 2px 12px rgba(0,0,0,0.04); position:relative;
+  transform:rotate(var(--tilt)); transition:transform 0.3s;
+}
+.gb-entry:hover { transform:rotate(0deg) translateY(-4px); }
+.gb-entry::before {
+  content:'\201C'; position:absolute; top:12px; left:16px;
+  font-family:'Lora',serif; font-size:4rem; color:var(--lake-pale); line-height:1;
+}
+.gb-entry p {
+  font-family:'Lora',serif; font-style:italic; color:var(--text); line-height:1.7;
+  font-size:0.95rem; position:relative; z-index:1;
+}
+.gb-entry .gb-author {
+  margin-top:14px; font-family:'Caveat',cursive; font-size:1.2rem;
+  color:var(--sunset); font-style:normal;
+}
+.gb-form {
+  max-width:600px; margin:0 auto; background:white; border-radius:20px;
+  padding:36px; box-shadow:0 4px 20px rgba(0,0,0,0.06);
+}
+.gb-form h3 {
+  font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.3rem;
+  color:var(--lake-deep); margin-bottom:20px; text-align:center;
+}
+.gb-form input, .gb-form textarea {
+  width:100%; padding:14px 18px; border:2px solid var(--lake-pale); border-radius:12px;
+  font-family:'Source Sans 3',sans-serif; font-size:1rem; color:var(--text);
+  margin-bottom:14px; transition:border-color 0.2s; outline:none; background:var(--lake-whisper);
+}
+.gb-form input:focus, .gb-form textarea:focus { border-color:var(--lake-light); background:white; }
+.gb-form textarea { min-height:120px; resize:vertical; }
+.gb-form button {
+  width:100%; padding:16px; background:var(--sunset); color:white; border:none; border-radius:14px;
+  font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.1rem; cursor:pointer; transition:all 0.3s;
+}
+.gb-form button:hover { background:var(--sunset-hot); transform:translateY(-2px); }
+
+/* ===== FAMILY ===== */
+.family { background:white; text-align:center; }
+.family-tagline { font-family:'Caveat',cursive; font-size:1.6rem; color:var(--sunset); margin-bottom:36px; }
+.family-stats { display:flex; justify-content:center; gap:48px; flex-wrap:wrap; margin-bottom:48px; }
+.stat { text-align:center; }
+.stat .stat-num { font-family:'Fredoka',sans-serif; font-weight:700; font-size:3rem; color:var(--lake); line-height:1; }
+.stat .stat-label { font-family:'Caveat',cursive; font-size:1.3rem; color:var(--text-light); margin-top:4px; }
+.family-emoji-row {
+  display:flex; justify-content:center; gap:6px; flex-wrap:wrap;
+  font-size:2.2rem; line-height:1; margin-bottom:36px;
+}
+.family-note {
+  font-family:'Lora',serif; font-style:italic; font-size:1.15rem;
+  color:var(--text-light); max-width:600px; margin:0 auto; line-height:1.8;
+}
+
+/* ===== FOOTER ===== */
+footer {
+  background:var(--lake-deep); color:rgba(255,255,255,0.6); text-align:center; padding:48px 24px;
+}
+footer .footer-house { font-family:'Fredoka',sans-serif; font-weight:700; font-size:1.4rem; color:white; margin-bottom:8px; }
+footer .footer-addr { font-size:0.9rem; margin-bottom:24px; }
+footer .footer-wave { font-size:2rem; margin-bottom:16px; }
+footer .footer-copy { font-size:0.8rem; color:rgba(255,255,255,0.35); }
+
+/* ===== RESPONSIVE ===== */
+@media (max-width: 768px) {
+  .nav-links { display:none; }
+  .photo-masonry { columns:2; }
+  .family-stats { gap:28px; }
+  section { padding:60px 20px; }
+  .hero { min-height:90vh; }
+  .sun { width:80px; height:80px; top:8%; right:10%; }
+  .weather-widget { grid-template-columns:1fr; }
+  .weather-now { border-right:none; border-bottom:2px solid var(--lake-pale); padding-right:0; padding-bottom:24px; }
+  .arrival-address { flex-direction:column; text-align:center; }
+  .arrival-address .addr-link { margin-left:0; }
+}
+@media (max-width: 480px) {
+  .photo-masonry { columns:1; }
+  .welcome-grid { grid-template-columns:1fr; }
+  .arrival-grid { grid-template-columns:1fr; }
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="mainNav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo"><span class="wave-icon">&#127754;</span> The Dickson Lake House</a>
+    <div class="nav-links">
+      <a href="#arrival">Arrival</a>
+      <a href="#welcome">Welcome</a>
+      <a href="#manual">House Guide</a>
+      <a href="#guide">Local Spots</a>
+      <a href="#photos">Memories</a>
+      <a href="#guestbook">Guestbook</a>
+      <a href="#weather">Weather</a>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="sun"></div>
+  <div class="cloud cloud-1"></div>
+  <div class="cloud cloud-2"></div>
+  <div class="cloud cloud-3"></div>
+  <div class="lake-shimmer"></div>
+  <div class="hero-content">
+    <div class="hero-pre">Welcome to</div>
+    <h1 class="hero-title">The Dickson<br>Lake House</h1>
+    <p class="hero-subtitle">Middle Straits Lake &middot; West Bloomfield, Michigan</p>
+    <a href="#arrival" class="hero-cta">Come On In &#9728;&#65039;</a>
+  </div>
+</section>
+
+<!-- ARRIVAL -->
+<section class="arrival" id="arrival">
+  <div class="container">
+    <div class="section-tag">You're almost here</div>
+    <h2 class="section-title">Getting Here &#128663;</h2>
+    <p class="section-desc">Everything you need to know to find us and get settled when you pull up.</p>
+    <div class="arrival-address">
+      <div class="addr-icon">&#128205;</div>
+      <div class="addr-text">
+        <h3>3726 Elder Road South</h3>
+        <p>West Bloomfield, MI 48324 &mdash; Right on Middle Straits Lake</p>
+      </div>
+      <a href="https://maps.google.com/?q=3726+Elder+Road+South+West+Bloomfield+MI" target="_blank" class="addr-link">Open in Maps &rarr;</a>
+    </div>
+    <div class="arrival-grid">
+      <div class="arrival-card">
+        <div class="card-icon">&#128663;</div>
+        <h3>Parking</h3>
+        <p>Parking in the driveway is first come, first served. If the driveway is full, there's additional parking available on the street. Just be mindful not to block the neighbors.</p>
+        <div class="detail">Early bird gets the driveway spot!</div>
+      </div>
+      <div class="arrival-card">
+        <div class="card-icon">&#128682;</div>
+        <h3>Come On In</h3>
+        <p>Head right in through the front door. If it's your first time, take a minute to orient yourself &mdash; the lake is straight out the back, and this website has everything else you need.</p>
+        <div class="detail">Kick off your shoes &mdash; you're home</div>
+      </div>
+      <div class="arrival-card">
+        <div class="card-icon">&#128230;</div>
+        <h3>What to Bring</h3>
+        <p>We've got the basics covered &mdash; towels, linens, kitchen essentials. Just bring your clothes, sunscreen, and whatever you like to drink. Maybe a card game or two.</p>
+        <div class="detail">Swimsuit is non-negotiable &#127946;</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- WELCOME -->
+<section class="welcome" id="welcome">
+  <div class="container">
+    <div class="section-tag">Make yourself at home</div>
+    <h2 class="section-title">The Essentials &#127969;</h2>
+    <p class="section-desc">The quick-reference stuff you'll want to know during your stay.</p>
+    <div class="welcome-grid">
+      <div class="welcome-card">
+        <div class="card-icon">&#128246;</div>
+        <h3>WiFi &amp; Essentials</h3>
+        <p>Network and password are posted on the fridge. Towels are in the hall closet. Extra blankets are in the upstairs linen cabinet. Make yourself at home!</p>
+        <div class="detail">WiFi password on the fridge &#128064;</div>
+      </div>
+      <div class="welcome-card">
+        <div class="card-icon">&#128758;</div>
+        <h3>The Lake</h3>
+        <p>Middle Straits Lake is an all-sports lake &mdash; great for swimming, kayaking, pontoon cruising, and fishing. Life jackets are in the dock box. Swim off the dock anytime!</p>
+        <div class="detail">Sunsets from the dock are unbeatable</div>
+      </div>
+      <div class="welcome-card">
+        <div class="card-icon">&#127769;</div>
+        <h3>Quiet Hours</h3>
+        <p>We love a good bonfire, but let's keep it mellow after 10pm out of respect for the neighbors. The lake carries sound &mdash; whisper voices, not shouts!</p>
+        <div class="detail">S'mores stuff is in the pantry &#128293;</div>
+      </div>
+      <div class="welcome-card">
+        <div class="card-icon">&#128465;&#65039;</div>
+        <h3>Before You Go</h3>
+        <p>Strip your beds and start a load of laundry if you can. Take your trash out. Run the dishwasher. Leave it a little better than you found it &mdash; the Dickson way!</p>
+        <div class="detail">Next family will thank you &#128591;</div>
+      </div>
+      <div class="welcome-card">
+        <div class="card-icon">&#127384;</div>
+        <h3>Emergencies</h3>
+        <p>Fire extinguisher is under the kitchen sink. First aid kit is in the downstairs bathroom cabinet. Nearest hospital: Henry Ford West Bloomfield &mdash; 10 min away.</p>
+        <div class="detail">Stay safe, have fun!</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- HOUSE MANUAL -->
+<section class="manual" id="manual">
+  <div class="container">
+    <div class="section-tag">Know your way around</div>
+    <h2 class="section-title">House Guide &#128203;</h2>
+    <p class="section-desc">Everything you need to know to keep the house humming. If Stan's not around to show you &mdash; this is your Stan.</p>
+    <div class="manual-categories">
+      <button class="manual-tab active" data-tab="kitchen">Kitchen</button>
+      <button class="manual-tab" data-tab="water">Boat &amp; Water</button>
+      <button class="manual-tab" data-tab="outdoor">Outdoor</button>
+      <button class="manual-tab" data-tab="systems">Systems</button>
+      <button class="manual-tab" data-tab="seasonal">Seasonal</button>
+    </div>
+    <div class="manual-content active" id="tab-kitchen">
+      <ul class="manual-list">
+        <li><span class="li-icon">&#9749;</span><div class="li-content"><h4>Coffee Maker</h4><p>Keurig is on the counter &mdash; pods are in the drawer below. For the big crew, the drip coffee maker is in the lower cabinet. Filters in the pantry.</p></div></li>
+        <li><span class="li-icon">&#128293;</span><div class="li-content"><h4>Grill</h4><p>Propane grill is on the deck. Extra tank is in the garage. Turn off the tank valve when done &mdash; and give the grates a brush while it's still hot.</p></div></li>
+        <li><span class="li-icon">&#128465;&#65039;</span><div class="li-content"><h4>Trash &amp; Recycling</h4><p>Trash goes out to the bins on the side of the garage. Pickup is Tuesday morning. Recycling is the blue bin. No plastic bags in recycling!</p></div></li>
+        <li><span class="li-icon">&#127869;&#65039;</span><div class="li-content"><h4>Dishwasher</h4><p>Please run it when it's full and unload when done. Pods are under the sink. The bottom rack sticks a little &mdash; just give it a firm pull.</p></div></li>
+      </ul>
+    </div>
+    <div class="manual-content" id="tab-water">
+      <ul class="manual-list">
+        <li><span class="li-icon">&#128676;</span><div class="li-content"><h4>Pontoon Boat</h4><p>Keys are on the hook by the back door. Check the fuel gauge before heading out. No-wake within 100 feet of shore. Life jackets must be on board for everyone.</p></div></li>
+        <li><span class="li-icon">&#128758;</span><div class="li-content"><h4>Kayaks &amp; Paddleboards</h4><p>Stored on the rack by the dock. Please rinse after use and put them back on the rack &mdash; not on the ground. Paddles are in the dock box.</p></div></li>
+        <li><span class="li-icon">&#127946;</span><div class="li-content"><h4>Swimming</h4><p>Swim off the dock anytime. The swim ladder is on the left side. Kids under 12 need a buddy or an adult watching. The lake drops off about 15 feet from the dock.</p></div></li>
+        <li><span class="li-icon">&#127907;</span><div class="li-content"><h4>Fishing</h4><p>Bass, bluegill, and pike are all in the lake. Rods are in the garage. Michigan fishing license required for ages 17+. Catch and release encouraged!</p></div></li>
+      </ul>
+    </div>
+    <div class="manual-content" id="tab-outdoor">
+      <ul class="manual-list">
+        <li><span class="li-icon">&#128293;</span><div class="li-content"><h4>Fire Pit</h4><p>Firewood is stacked in the side yard. Kindling and lighter are in the garage. Fully extinguish fires before going to bed &mdash; hose it down, don't just let it burn out.</p></div></li>
+        <li><span class="li-icon">&#127807;</span><div class="li-content"><h4>Lawn &amp; Garden</h4><p>Enjoy the yard! The sprinklers are on a timer &mdash; they run early morning. If you see a garden hose running, please shut it off when done.</p></div></li>
+        <li><span class="li-icon">&#129439;</span><div class="li-content"><h4>Bugs</h4><p>Bug spray is on the shelf in the garage. Citronella candles are in the deck storage box. Michigan mosquitoes are real &mdash; spray up at dusk!</p></div></li>
+      </ul>
+    </div>
+    <div class="manual-content" id="tab-systems">
+      <ul class="manual-list">
+        <li><span class="li-icon">&#127777;&#65039;</span><div class="li-content"><h4>Thermostat</h4><p>The Nest thermostat is in the hallway. Please don't set below 68 in summer or above 72 in winter. If you're the last to leave, set it to Away mode.</p></div></li>
+        <li><span class="li-icon">&#128167;</span><div class="li-content"><h4>Water</h4><p>We're on well water &mdash; it's safe but tastes different than city water. Brita pitcher is in the fridge. Please don't run water excessively.</p></div></li>
+        <li><span class="li-icon">&#128703;</span><div class="li-content"><h4>Hot Water</h4><p>The water heater handles about 3 showers back-to-back before needing to recover. Stagger your showers during big family weekends!</p></div></li>
+        <li><span class="li-icon">&#9889;</span><div class="li-content"><h4>Electrical Panel</h4><p>Breaker box is in the basement utility room. If something trips, check there before calling Dad. The dock outlet is on its own breaker (#14).</p></div></li>
+      </ul>
+    </div>
+    <div class="manual-content" id="tab-seasonal">
+      <ul class="manual-list">
+        <li><span class="li-icon">&#127810;</span><div class="li-content"><h4>Fall Closing</h4><p>Usually early October. Boat comes out, dock comes in, water lines get blown out. This is a family effort &mdash; all hands on deck (literally).</p></div></li>
+        <li><span class="li-icon">&#10052;&#65039;</span><div class="li-content"><h4>Winter</h4><p>The house can be used in winter! Heat stays at 58&deg;F minimum. Please check that no faucets are dripping and no windows are left open.</p></div></li>
+        <li><span class="li-icon">&#127800;</span><div class="li-content"><h4>Spring Opening</h4><p>Usually early May. Dock goes in, boat gets launched, water gets turned on and tested. Another all-family event &mdash; and usually the first grill of the year!</p></div></li>
+        <li><span class="li-icon">&#9728;&#65039;</span><div class="li-content"><h4>Peak Summer</h4><p>July 4th week is prime time. Coordinate with the family on the calendar so everyone gets lake time. Weekdays are actually the best &mdash; the lake is glass.</p></div></li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- LOCAL GUIDE -->
+<section class="guide" id="guide">
+  <div class="container">
+    <div class="section-tag">Around the lake</div>
+    <h2 class="section-title">Local Favorites &#128205;</h2>
+    <p class="section-desc">Tried and tested by Dicksons over the years. These are the spots worth knowing about.</p>
+    <div class="guide-grid">
+      <div class="guide-card">
+        <div class="g-icon">&#127829;</div>
+        <h3>Buddy's Pizza</h3>
+        <p>Detroit-style pizza, the real deal. Order the 4-square and get extra pepperoni. Great for feeding the whole crew.</p>
+        <span class="g-tag">Family Dinner</span>
+      </div>
+      <div class="guide-card">
+        <div class="g-icon">&#127846;</div>
+        <h3>Ray's Ice Cream</h3>
+        <p>A summer tradition. The line is always long and always worth it. Get the Superman &mdash; you're in Michigan.</p>
+        <span class="g-tag">Dessert Run</span>
+      </div>
+      <div class="guide-card">
+        <div class="g-icon">&#128722;</div>
+        <h3>Kroger (Orchard Lake)</h3>
+        <p>Closest full grocery store. About 8 minutes. Stock up before the weekend &mdash; nothing worse than a midday grocery run when the lake is calling.</p>
+        <span class="g-tag">Essentials</span>
+      </div>
+      <div class="guide-card">
+        <div class="g-icon">&#128296;</div>
+        <h3>Ace Hardware</h3>
+        <p>When something breaks (it will), Ace on Orchard Lake Road has you covered. They actually help you find stuff.</p>
+        <span class="g-tag">Fix-It</span>
+      </div>
+      <div class="guide-card">
+        <div class="g-icon">&#127973;</div>
+        <h3>Henry Ford Hospital</h3>
+        <p>West Bloomfield location, about 10 minutes away. Full ER. Hopefully you won't need it &mdash; but now you know.</p>
+        <span class="g-tag">Emergency</span>
+      </div>
+      <div class="guide-card">
+        <div class="g-icon">&#9981;</div>
+        <h3>Shell Station</h3>
+        <p>Corner of Orchard Lake and Pontiac Trail. Fill up the boat gas cans here &mdash; it's the closest station to the house.</p>
+        <span class="g-tag">Fuel Up</span>
+      </div>
+      <div class="guide-card">
+        <div class="g-icon">&#9749;</div>
+        <h3>Starbucks</h3>
+        <p>On Orchard Lake Road heading south. For when the Keurig just isn't going to cut it and you need the real thing.</p>
+        <span class="g-tag">Morning Coffee</span>
+      </div>
+      <div class="guide-card">
+        <div class="g-icon">&#127794;</div>
+        <h3>West Bloomfield Trail</h3>
+        <p>A paved 4.5-mile loop that's great for morning walks and bike rides. Trailhead is a few minutes away by car.</p>
+        <span class="g-tag">Get Moving</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- PHOTO WALL -->
+<section class="photos" id="photos">
+  <div class="container">
+    <div class="section-tag">Summers to remember</div>
+    <h2 class="section-title">Memory Wall &#128248;</h2>
+    <p class="section-desc">Every visit makes a memory. Here are some of our favorites from life on the lake.</p>
+    <div class="photo-masonry">
+      <div class="photo-item">
+        <svg class="photo-placeholder" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" rx="14" fill="url(#g1)"/><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3da5c2"/><stop offset="100%" stop-color="#1b6b8a"/></linearGradient></defs><text x="200" y="140" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Sunset on the dock</text><text x="200" y="170" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
+        <div class="photo-overlay"><div class="caption">Sunset on the dock</div><div class="date">Summer 2024</div></div>
+      </div>
+      <div class="photo-item">
+        <svg class="photo-placeholder" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="500" rx="14" fill="url(#g2)"/><defs><linearGradient id="g2" x1="0" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#4a9e6f"/><stop offset="100%" stop-color="#2d6b4a"/></linearGradient></defs><text x="200" y="240" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Grandkids on the lawn</text><text x="200" y="270" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
+        <div class="photo-overlay"><div class="caption">Grandkids on the lawn</div><div class="date">July 4th 2024</div></div>
+      </div>
+      <div class="photo-item">
+        <svg class="photo-placeholder" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="350" rx="14" fill="url(#g3)"/><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="0.5"><stop offset="0%" stop-color="#f2845e"/><stop offset="100%" stop-color="#e85d3a"/></linearGradient></defs><text x="200" y="165" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">S'mores night</text><text x="200" y="195" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
+        <div class="photo-overlay"><div class="caption">S'mores night</div><div class="date">Labor Day 2024</div></div>
+      </div>
+      <div class="photo-item">
+        <svg class="photo-placeholder" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="280" rx="14" fill="url(#g4)"/><defs><linearGradient id="g4" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#f6a96c"/><stop offset="100%" stop-color="#f5e6c8"/></linearGradient></defs><text x="200" y="130" text-anchor="middle" fill="rgba(107,82,64,0.5)" font-family="sans-serif" font-size="20">Morning on the water</text><text x="200" y="160" text-anchor="middle" fill="rgba(107,82,64,0.35)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
+        <div class="photo-overlay"><div class="caption">Morning on the water</div><div class="date">Summer 2023</div></div>
+      </div>
+      <div class="photo-item">
+        <svg class="photo-placeholder" viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="420" rx="14" fill="url(#g5)"/><defs><linearGradient id="g5" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#5eb8d4"/><stop offset="100%" stop-color="#0e4257"/></linearGradient></defs><text x="200" y="200" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Boat day!</text><text x="200" y="230" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
+        <div class="photo-overlay"><div class="caption">Boat day!</div><div class="date">Summer 2023</div></div>
+      </div>
+      <div class="photo-item">
+        <svg class="photo-placeholder" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="320" rx="14" fill="url(#g6)"/><defs><linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6b5240"/><stop offset="100%" stop-color="#3e2d1e"/></linearGradient></defs><text x="200" y="150" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Fall closing day</text><text x="200" y="180" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
+        <div class="photo-overlay"><div class="caption">Fall closing day</div><div class="date">October 2024</div></div>
+      </div>
+    </div>
+    <div class="photo-cta">
+      <p>Got lake pics? We want 'em! &#128242;</p>
+    </div>
+  </div>
+</section>
+
+<!-- GUESTBOOK -->
+<section class="guestbook" id="guestbook">
+  <div class="container">
+    <div class="section-tag">Leave your mark</div>
+    <h2 class="section-title">Guestbook &#128221;</h2>
+    <p class="section-desc">Sign in, leave a note, share a favorite moment. This is the digital version of the book on the coffee table.</p>
+    <div class="guestbook-entries">
+      <div class="gb-entry" style="--tilt: -1.5deg;">
+        <p>Best 4th of July ever. The kids are already asking when we can come back. That sunset pontoon ride was magic.</p>
+        <div class="gb-author">&mdash; The Dickson Crew, July 2024</div>
+      </div>
+      <div class="gb-entry" style="--tilt: 1deg;">
+        <p>Thank you Stan &amp; Heather for the most relaxing weekend. We caught 6 bluegill off the dock and the kids didn't want to leave!</p>
+        <div class="gb-author">&mdash; Mike &amp; Sarah, August 2024</div>
+      </div>
+      <div class="gb-entry" style="--tilt: -0.5deg;">
+        <p>Three generations, one dock, zero cell service complaints. This place has a way of pulling everyone together.</p>
+        <div class="gb-author">&mdash; Grandma Heather &#10084;&#65039;</div>
+      </div>
+    </div>
+    <div class="gb-form" id="guestbookForm">
+      <h3>Leave a Note &#9997;&#65039;</h3>
+      <input type="text" placeholder="Your name" id="gbName">
+      <textarea placeholder="Share a memory, a thank you, or just say hi..." id="gbMessage"></textarea>
+      <button onclick="submitGuestbook()">Sign the Guestbook</button>
+    </div>
+  </div>
+</section>
+
+<!-- FAMILY -->
+<section class="family" id="family">
+  <div class="container">
+    <div class="section-tag">Our family</div>
+    <h2 class="section-title">The Dickson Family &#128153;</h2>
+    <p class="family-tagline">Started by Stan &amp; Heather. Continued by everyone who walks through the door.</p>
+    <div class="family-stats">
+      <div class="stat"><div class="stat-num" data-target="2">0</div><div class="stat-label">Founders</div></div>
+      <div class="stat"><div class="stat-num" data-target="6">0</div><div class="stat-label">Kids</div></div>
+      <div class="stat"><div class="stat-num" data-target="16">0</div><div class="stat-label">Grandkids (&amp; counting!)</div></div>
+      <div class="stat"><div class="stat-num" data-target="1">0</div><div class="stat-label">Lake House</div></div>
+    </div>
+    <div class="family-emoji-row">
+      <span>&#128116;</span><span>&#128117;</span><span>&#128153;</span>
+      <span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128153;</span>
+      <span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span>
+    </div>
+    <p class="family-note">Some families do holidays. The Dicksons do lake days.<br>This house is the place where the whole family comes together &mdash; where grandkids learn to swim, where stories get told around the fire, and where every sunset feels like it was made just for us.</p>
+  </div>
+</section>
+
+<!-- WEATHER -->
+<section class="weather" id="weather">
+  <div class="container">
+    <div class="section-tag">Before you head out</div>
+    <h2 class="section-title">Lake Weather &#127780;&#65039;</h2>
+    <p class="section-desc">Live conditions at Middle Straits Lake so you can plan your day on the water.</p>
+    <div class="weather-widget" id="weatherWidget">
+      <div class="weather-loading" id="weatherLoading">Checking the skies over the lake...</div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-wave">&#127754;</div>
+  <div class="footer-house">The Dickson Lake House</div>
+  <div class="footer-addr">3726 Elder Road South &middot; West Bloomfield, MI &middot; Middle Straits Lake</div>
+  <div class="footer-copy">Made with love for the Dickson family</div>
+</footer>
+
+<script>
+// ===== NAV SCROLL =====
+const nav = document.getElementById('mainNav');
+window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 50); });
+
+// ===== WEATHER WIDGET =====
+// Uses Open-Meteo API (free, no key required)
+// West Bloomfield / Middle Straits Lake coordinates
+const LAKE_LAT = 42.5756;
+const LAKE_LON = -83.3916;
+
+const WMO_CODES = {
+  0: { icon: '&#9728;&#65039;', desc: 'Clear skies' },
+  1: { icon: '&#127780;&#65039;', desc: 'Mostly clear' },
+  2: { icon: '&#9925;', desc: 'Partly cloudy' },
+  3: { icon: '&#9729;&#65039;', desc: 'Overcast' },
+  45: { icon: '&#127787;&#65039;', desc: 'Foggy' },
+  48: { icon: '&#127787;&#65039;', desc: 'Fog' },
+  51: { icon: '&#127782;&#65039;', desc: 'Light drizzle' },
+  53: { icon: '&#127782;&#65039;', desc: 'Drizzle' },
+  55: { icon: '&#127782;&#65039;', desc: 'Heavy drizzle' },
+  61: { icon: '&#127783;&#65039;', desc: 'Light rain' },
+  63: { icon: '&#127783;&#65039;', desc: 'Rain' },
+  65: { icon: '&#127783;&#65039;', desc: 'Heavy rain' },
+  66: { icon: '&#127783;&#65039;', desc: 'Freezing rain' },
+  67: { icon: '&#127783;&#65039;', desc: 'Freezing rain' },
+  71: { icon: '&#127784;&#65039;', desc: 'Light snow' },
+  73: { icon: '&#127784;&#65039;', desc: 'Snow' },
+  75: { icon: '&#127784;&#65039;', desc: 'Heavy snow' },
+  77: { icon: '&#127784;&#65039;', desc: 'Snow grains' },
+  80: { icon: '&#127783;&#65039;', desc: 'Rain showers' },
+  81: { icon: '&#127783;&#65039;', desc: 'Rain showers' },
+  82: { icon: '&#127783;&#65039;', desc: 'Heavy showers' },
+  85: { icon: '&#127784;&#65039;', desc: 'Snow showers' },
+  86: { icon: '&#127784;&#65039;', desc: 'Heavy snow showers' },
+  95: { icon: '&#9889;', desc: 'Thunderstorm' },
+  96: { icon: '&#9889;', desc: 'Thunderstorm w/ hail' },
+  99: { icon: '&#9889;', desc: 'Severe thunderstorm' },
+};
+
+function getWeatherInfo(code) {
+  return WMO_CODES[code] || { icon: '&#127780;&#65039;', desc: 'Fair' };
+}
+
+async function loadWeather() {
+  const widget = document.getElementById('weatherWidget');
+  try {
+    const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + LAKE_LAT +
+      '&longitude=' + LAKE_LON +
+      '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code' +
+      '&daily=weather_code,temperature_2m_max,temperature_2m_min' +
+      '&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch' +
+      '&timezone=America%2FDetroit&forecast_days=7';
+
+    const res = await fetch(url);
+    if (!res.ok) throw new Error('Weather API error');
+    const data = await res.json();
+
+    const current = data.current;
+    const daily = data.daily;
+    const now = getWeatherInfo(current.weather_code);
+
+    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+
+    let forecastHTML = '';
+    for (let i = 1; i < 7; i++) {
+      const d = new Date(daily.time[i] + 'T12:00:00');
+      const dayName = i === 1 ? 'Tomorrow' : days[d.getDay()];
+      const info = getWeatherInfo(daily.weather_code[i]);
+      forecastHTML += '<div class="forecast-day">' +
+        '<div class="fd-name">' + dayName + '</div>' +
+        '<div class="fd-icon">' + info.icon + '</div>' +
+        '<div class="fd-temps"><span class="fd-hi">' + Math.round(daily.temperature_2m_max[i]) + '&deg;</span> ' +
+        '<span class="fd-lo">' + Math.round(daily.temperature_2m_min[i]) + '&deg;</span></div>' +
+        '</div>';
+    }
+
+    widget.innerHTML =
+      '<div class="weather-now">' +
+        '<div class="w-icon">' + now.icon + '</div>' +
+        '<div class="w-temp">' + Math.round(current.temperature_2m) + '&deg;F</div>' +
+        '<div class="w-desc">' + now.desc + '</div>' +
+        '<div class="w-details">' +
+          '<span>&#128168; ' + Math.round(current.wind_speed_10m) + ' mph</span>' +
+          '<span>&#128167; ' + current.relative_humidity_2m + '%</span>' +
+        '</div>' +
+      '</div>' +
+      '<div class="weather-forecast">' + forecastHTML + '</div>';
+  } catch (e) {
+    widget.innerHTML =
+      '<div class="weather-now" style="border:none;">' +
+        '<div class="w-icon">&#127780;&#65039;</div>' +
+        '<div class="w-desc" style="font-size:1rem;">Could not load weather right now.<br>Check back in a bit!</div>' +
+      '</div>';
+    console.error('Weather load failed:', e);
+  }
+}
+loadWeather();
+
+// ===== MANUAL TABS =====
+document.querySelectorAll('.manual-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.manual-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.manual-content').forEach(c => c.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
+  });
+});
+
+// ===== ANIMATED COUNTERS =====
+const stats = document.querySelectorAll('.stat-num');
+const statsObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      const el = entry.target;
+      const target = parseInt(el.dataset.target);
+      let current = 0;
+      const increment = Math.ceil(target / 30);
+      const timer = setInterval(() => {
+        current += increment;
+        if (current >= target) { current = target; clearInterval(timer); }
+        el.textContent = current;
+      }, 40);
+      statsObserver.unobserve(el);
+    }
+  });
+}, { threshold: 0.5 });
+stats.forEach(stat => statsObserver.observe(stat));
+
+// ===== FADE IN ON SCROLL =====
+const fadeEls = document.querySelectorAll('.welcome-card, .arrival-card, .guide-card, .manual-list li, .gb-entry, .photo-item, .forecast-day');
+const fadeObserver = new IntersectionObserver((entries) => {
+  entries.forEach(entry => {
+    if (entry.isIntersecting) {
+      entry.target.style.opacity = '1';
+      entry.target.style.transform = entry.target.style.transform
+        ? entry.target.style.transform.replace('translateY(20px)', 'translateY(0)')
+        : 'translateY(0)';
+      fadeObserver.unobserve(entry.target);
+    }
+  });
+}, { threshold: 0.1 });
+fadeEls.forEach((el, i) => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(20px) ' + (el.style.transform || '');
+  el.style.transition = 'opacity 0.6s ease ' + (i % 4 * 0.1) + 's, transform 0.6s ease ' + (i % 4 * 0.1) + 's';
+  fadeObserver.observe(el);
+});
+
+// ===== GUESTBOOK =====
+function submitGuestbook() {
+  const name = document.getElementById('gbName').value.trim();
+  const msg = document.getElementById('gbMessage').value.trim();
+  if (!name || !msg) { alert('Please fill in your name and a message!'); return; }
+  const entries = document.querySelector('.guestbook-entries');
+  const tilts = [-2, -1, 0.5, 1, 1.5, -0.5];
+  const tilt = tilts[Math.floor(Math.random() * tilts.length)];
+  const entry = document.createElement('div');
+  entry.className = 'gb-entry';
+  entry.style.cssText = '--tilt:' + tilt + 'deg; opacity:0; transform:translateY(20px) rotate(' + tilt + 'deg);';
+  const now = new Date();
+  const month = now.toLocaleString('default', { month: 'long' });
+  entry.innerHTML = '<p>' + msg.replace(/</g, '&lt;') + '</p><div class="gb-author">&mdash; ' + name.replace(/</g, '&lt;') + ', ' + month + ' ' + now.getFullYear() + '</div>';
+  entries.prepend(entry);
+  requestAnimationFrame(() => {
+    entry.style.transition = 'all 0.5s ease';
+    entry.style.opacity = '1';
+    entry.style.transform = 'translateY(0) rotate(' + tilt + 'deg)';
+  });
+  document.getElementById('gbName').value = '';
+  document.getElementById('gbMessage').value = '';
+}
+
+// ===== SMOOTH SCROLL =====
+document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+  anchor.addEventListener('click', function(e) {
+    e.preventDefault();
+    const target = document.querySelector(this.getAttribute('href'));
+    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+  });
+});
+</script>
+
+</body>
+</html>
