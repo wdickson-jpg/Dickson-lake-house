@@ -3,1680 +3,573 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>The Dickson Lake House &mdash; Middle Straits Lake</title>
-<link href="https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&family=Lora:ital,wght@0,400;0,600;1,400&family=Caveat:wght@400;600;700&family=Source+Sans+3:wght@300;400;500;600&display=swap" rel="stylesheet">
+<title>The Dickson Lake House — Middle Straits Lake</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;1,400&family=Caveat:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
 <style>
-*, *::before, *::after { margin: 0; padding: 0; box-sizing: border-box; }
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+  --black:#222;--dark:#484848;--mid:#717171;--light:#b0b0b0;
+  --border:#ddd;--border-light:#ebebeb;--bg:#fff;--bg-gray:#f7f7f7;
+  --rose:#3b9fc2;--rose-dark:#2a7d9e;--rose-light:#e8f4f8;
+  --teal:#008489;--teal-light:#e0f7f7;
+  --star:#ffc107;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Nunito Sans',sans-serif;color:var(--black);background:var(--bg);line-height:1.55}
 
-:root {
-  --lake: #1b6b8a;
-  --lake-deep: #0e4257;
-  --lake-light: #3da5c2;
-  --lake-pale: #d4ecf5;
-  --lake-whisper: #f0f8fb;
-  --sunset: #f2845e;
-  --sunset-warm: #f6a96c;
-  --sunset-hot: #e85d3a;
-  --sand: #f5e6c8;
-  --sand-light: #faf3e6;
-  --pine: #2d6b4a;
-  --pine-light: #4a9e6f;
-  --dock: #6b5240;
-  --text: #1e2d35;
-  --text-light: #5a727d;
-  --white: #ffffff;
-}
+/* PW */
+.pw{position:fixed;inset:0;z-index:9999;background:white;display:flex;align-items:center;justify-content:center;transition:opacity .4s,visibility .4s}
+.pw.gone{opacity:0;visibility:hidden;pointer-events:none}
+.pw-in{text-align:center;max-width:360px;width:90%}
+.pw-in h2{font-size:1.6rem;font-weight:800;margin-bottom:4px}
+.pw-in .pw-sub{color:var(--mid);margin-bottom:24px;font-size:.95rem}
+.pw-in input{width:100%;padding:14px 16px;border:1.5px solid var(--border);border-radius:10px;font-family:inherit;font-size:1rem;text-align:center;outline:none;transition:border .2s}
+.pw-in input:focus{border-color:var(--black)}
+.pw-in button{width:100%;margin-top:12px;padding:14px;background:var(--rose);color:white;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:1rem;cursor:pointer;transition:background .2s}
+.pw-in button:hover{background:var(--rose-dark)}
+.pw-err{color:var(--rose);font-size:.85rem;margin-top:8px;min-height:1.2em}
 
-html { scroll-behavior: smooth; }
+/* NAV */
+nav{position:sticky;top:0;z-index:100;background:white;border-bottom:1px solid var(--border-light);padding:0 24px}
+.nav-c{max-width:1120px;margin:0 auto;display:flex;align-items:center;justify-content:space-between;height:56px}
+.nav-logo{font-weight:800;font-size:1.05rem;color:var(--rose);text-decoration:none;display:flex;align-items:center;gap:6px}
+.nav-links{display:flex;gap:2px}
+.nav-links a{color:var(--dark);text-decoration:none;font-size:.82rem;font-weight:600;padding:8px 12px;border-radius:20px;transition:background .15s}
+.nav-links a:hover{background:var(--bg-gray)}
 
-body {
-  font-family: 'Source Sans 3', sans-serif;
-  color: var(--text);
-  background: var(--white);
-  overflow-x: hidden;
-  line-height: 1.7;
-}
+/* PHOTO GRID */
+.photos-hero{max-width:1120px;margin:0 auto;padding:20px 24px 0;display:grid;grid-template-columns:2fr 1fr 1fr;grid-template-rows:1fr 1fr;gap:8px;height:380px;border-radius:16px;overflow:hidden}
+.photos-hero .ph{position:relative;overflow:hidden;cursor:pointer;background:#e8e8e8}
+.photos-hero .ph:first-child{grid-row:1/3}
+.photos-hero .ph svg{width:100%;height:100%;object-fit:cover;display:block}
+.photos-hero .ph-label{position:absolute;bottom:10px;left:12px;font-family:'Caveat',cursive;font-size:1.05rem;color:white;text-shadow:0 1px 6px rgba(0,0,0,.5);opacity:0;transition:opacity .2s}
+.photos-hero .ph:hover .ph-label{opacity:1}
 
-/* ===== PASSWORD GATE ===== */
-.pw-gate {
-  position: fixed; top: 0; left: 0; right: 0; bottom: 0; z-index: 9999;
-  background: linear-gradient(170deg, #d4ecf5 0%, #a8d8ea 25%, #5eb8d4 50%, #3897b5 70%, #1b6b8a 100%);
-  display: flex; align-items: center; justify-content: center;
-  transition: opacity 0.5s, visibility 0.5s;
-}
-.pw-gate.hidden { opacity: 0; visibility: hidden; pointer-events: none; }
-.pw-box {
-  background: white; border-radius: 24px; padding: 48px 40px; text-align: center;
-  box-shadow: 0 20px 60px rgba(14,66,87,0.3); max-width: 400px; width: 90%;
-}
-.pw-box .pw-wave { font-size: 3rem; margin-bottom: 12px; }
-.pw-box h2 {
-  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.6rem;
-  color: var(--lake-deep); margin-bottom: 6px;
-}
-.pw-box .pw-sub {
-  font-family: 'Caveat', cursive; font-size: 1.2rem; color: var(--text-light); margin-bottom: 28px;
-}
-.pw-box input {
-  width: 100%; padding: 14px 18px; border: 2px solid var(--lake-pale); border-radius: 14px;
-  font-family: 'Source Sans 3', sans-serif; font-size: 1.05rem; text-align: center;
-  outline: none; background: var(--lake-whisper); color: var(--text); transition: border-color 0.2s;
-}
-.pw-box input:focus { border-color: var(--lake-light); background: white; }
-.pw-box button {
-  width: 100%; margin-top: 14px; padding: 14px; background: var(--sunset); color: white;
-  border: none; border-radius: 14px; font-family: 'Fredoka', sans-serif; font-weight: 600;
-  font-size: 1.05rem; cursor: pointer; transition: all 0.3s;
-}
-.pw-box button:hover { background: var(--sunset-hot); transform: translateY(-2px); }
-.pw-error {
-  color: var(--sunset-hot); font-family: 'Fredoka', sans-serif; font-size: 0.9rem;
-  margin-top: 12px; min-height: 1.3em;
-}
-.site-content { display: none; }
-.site-content.visible { display: block; }
+/* TITLE BAR */
+.title-bar{max-width:1120px;margin:0 auto;padding:20px 24px 0}
+.title-bar h1{font-size:1.65rem;font-weight:800;line-height:1.25;margin-bottom:6px}
+.title-meta{display:flex;align-items:center;gap:16px;font-size:.88rem;color:var(--dark);flex-wrap:wrap}
+.title-meta .tm-stars{color:var(--black);font-weight:700}
+.title-meta .tm-dot{color:var(--light)}
+.title-meta a{color:var(--dark);font-weight:600;text-decoration:underline}
 
-/* ===== NAV ===== */
-nav {
-  position: fixed; top: 0; left: 0; right: 0; z-index: 1000;
-  background: rgba(255,255,255,0.92);
-  backdrop-filter: blur(12px);
-  border-bottom: 2px solid var(--lake-pale);
-  transition: box-shadow 0.3s;
-}
-nav.scrolled { box-shadow: 0 4px 24px rgba(27,107,138,0.1); }
-.nav-inner {
-  max-width: 1200px; margin: 0 auto; padding: 14px 24px;
-  display: flex; align-items: center; justify-content: space-between;
-}
-.nav-logo {
-  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.25rem;
-  color: var(--lake); display: flex; align-items: center; gap: 8px; text-decoration: none;
-}
-.nav-logo .wave-icon { font-size: 1.5rem; }
-.nav-links { display: flex; gap: 6px; flex-wrap: wrap; }
-.nav-links a {
-  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.85rem;
-  color: var(--lake-deep); text-decoration: none; padding: 6px 12px;
-  border-radius: 24px; transition: all 0.2s;
-}
-.nav-links a:hover { background: var(--lake-pale); color: var(--lake); }
+/* TWO COL LAYOUT */
+.layout{max-width:1120px;margin:0 auto;padding:24px 24px 0;display:grid;grid-template-columns:1fr 380px;gap:48px;align-items:start}
+.main{min-width:0}
+.sidebar{position:sticky;top:72px}
 
-/* ===== HERO ===== */
-.hero {
-  min-height: 100vh; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; text-align: center;
-  position: relative; overflow: hidden;
-  background: linear-gradient(170deg, #d4ecf5 0%, #a8d8ea 25%, #5eb8d4 50%, #3897b5 70%, #1b6b8a 100%);
-}
-.hero::before {
-  content: ''; position: absolute; bottom: -2px; left: 0; right: 0; height: 120px;
-  background: url("data:image/svg+xml,%3Csvg viewBox='0 0 1440 120' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M0,60 C360,120 720,0 1080,60 C1260,90 1380,80 1440,70 L1440,120 L0,120Z' fill='%23ffffff'/%3E%3C/svg%3E") center bottom/cover no-repeat;
-  z-index: 2;
-}
-.sun {
-  position: absolute; top: 12%; right: 15%; width: 130px; height: 130px;
-  background: radial-gradient(circle, #ffe082 0%, #ffb74d 40%, rgba(255,183,77,0) 70%);
-  border-radius: 50%; animation: sunPulse 4s ease-in-out infinite;
-}
-@keyframes sunPulse { 0%,100%{transform:scale(1);opacity:.9} 50%{transform:scale(1.08);opacity:1} }
-.cloud {
-  position: absolute; background: rgba(255,255,255,0.5);
-  border-radius: 50px; animation: drift linear infinite;
-}
-.cloud::before, .cloud::after { content:''; position:absolute; background:rgba(255,255,255,0.5); border-radius:50%; }
-.cloud-1 { width:140px; height:40px; top:18%; left:-150px; animation-duration:35s; }
-.cloud-1::before { width:60px; height:60px; top:-30px; left:25px; }
-.cloud-1::after { width:45px; height:45px; top:-20px; left:70px; }
-.cloud-2 { width:100px; height:30px; top:12%; left:-100px; animation-duration:45s; animation-delay:8s; }
-.cloud-2::before { width:45px; height:45px; top:-22px; left:20px; }
-.cloud-2::after { width:35px; height:35px; top:-15px; left:50px; }
-.cloud-3 { width:120px; height:35px; top:25%; left:-120px; animation-duration:40s; animation-delay:15s; }
-.cloud-3::before { width:50px; height:50px; top:-25px; left:30px; }
-.cloud-3::after { width:40px; height:40px; top:-18px; left:65px; }
-@keyframes drift { from{transform:translateX(0)} to{transform:translateX(calc(100vw + 300px))} }
-.lake-shimmer {
-  position:absolute; bottom:100px; left:0; right:0; height:200px;
-  background:repeating-linear-gradient(90deg,transparent,rgba(255,255,255,0.08) 2px,transparent 4px);
-  animation:shimmer 3s ease-in-out infinite;
-}
-@keyframes shimmer { 0%,100%{opacity:.3} 50%{opacity:.7} }
-.hero-content { position:relative; z-index:3; padding:0 24px; }
-.hero-pre {
-  font-family:'Caveat',cursive; font-size:1.6rem; color:rgba(255,255,255,0.9);
-  margin-bottom:8px; animation:fadeUp 1s ease-out 0.2s both;
-}
-.hero-title {
-  font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(3rem,8vw,6rem);
-  color:var(--white); line-height:1.1; text-shadow:0 4px 30px rgba(14,66,87,0.3);
-  margin-bottom:12px; animation:fadeUp 1s ease-out 0.4s both;
-}
-.hero-subtitle {
-  font-family:'Lora',serif; font-style:italic; font-size:clamp(1.1rem,2.5vw,1.5rem);
-  color:rgba(255,255,255,0.9); margin-bottom:32px; animation:fadeUp 1s ease-out 0.6s both;
-}
-.hero-cta {
-  display:inline-flex; align-items:center; gap:10px; background:var(--sunset); color:white;
-  font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.15rem; padding:16px 36px;
-  border-radius:50px; text-decoration:none; transition:all 0.3s;
-  box-shadow:0 6px 24px rgba(242,132,94,0.4); animation:fadeUp 1s ease-out 0.8s both;
-}
-.hero-cta:hover { transform:translateY(-3px) scale(1.03); box-shadow:0 10px 32px rgba(242,132,94,0.5); background:var(--sunset-hot); }
-@keyframes fadeUp { from{opacity:0;transform:translateY(30px)} to{opacity:1;transform:translateY(0)} }
+/* SIDEBAR CARD */
+.side-card{border:1px solid var(--border);border-radius:12px;padding:24px;box-shadow:0 6px 16px rgba(0,0,0,.08)}
+.side-card h3{font-size:1.3rem;font-weight:800;margin-bottom:4px}
+.side-card .sc-sub{color:var(--mid);font-size:.88rem;margin-bottom:16px}
+.sc-stats{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:16px}
+.sc-stat{text-align:center;padding:12px;background:var(--bg-gray);border-radius:8px}
+.sc-stat .ss-val{font-size:1.4rem;font-weight:800;color:var(--black)}
+.sc-stat .ss-label{font-size:.72rem;color:var(--mid);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.sc-addr{padding:14px 0;border-top:1px solid var(--border-light);font-size:.88rem;color:var(--dark)}
+.sc-addr strong{display:block;font-size:.95rem;color:var(--black);margin-bottom:2px}
+.sc-btn{display:block;width:100%;padding:14px;background:var(--rose);color:white;border:none;border-radius:10px;font-family:inherit;font-weight:700;font-size:.95rem;cursor:pointer;text-decoration:none;text-align:center;transition:background .2s;margin-top:12px}
+.sc-btn:hover{background:var(--rose-dark)}
+.sc-links{margin-top:14px;display:flex;flex-direction:column;gap:6px}
+.sc-link{font-size:.82rem;color:var(--dark);text-decoration:none;display:flex;align-items:center;gap:6px;padding:6px 0;transition:color .15s}
+.sc-link:hover{color:var(--rose)}
+.sc-link .sl-icon{font-size:1rem}
 
-/* ===== SHARED SECTION STYLES ===== */
-section { padding: 48px 24px; }
-.container { max-width: 1100px; margin: 0 auto; }
-.section-tag { font-family:'Caveat',cursive; font-size:1.1rem; color:var(--sunset); margin-bottom:2px; }
-.section-title {
-  font-family:'Fredoka',sans-serif; font-weight:700; font-size:clamp(1.5rem,3.5vw,2.2rem);
-  color:var(--lake-deep); margin-bottom:8px; line-height:1.2;
-}
-.section-desc { font-size:0.95rem; color:var(--text-light); max-width:650px; margin-bottom:28px; line-height:1.7; }
+/* SECTION DIVIDERS */
+.sec-div{border:none;border-top:1px solid var(--border-light);margin:28px 0}
 
-/* ===== WEATHER WIDGET ===== */
-.weather { background: linear-gradient(135deg, var(--lake-whisper) 0%, var(--white) 100%); }
-.weather-widget {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 16px;
-  background: white;
-  border-radius: 16px;
-  padding: 20px;
-  box-shadow: 0 4px 24px rgba(27,107,138,0.08);
-  border: 2px solid var(--lake-pale);
-}
-.weather-now {
-  display: flex; flex-direction: column; align-items: center; justify-content: center;
-  text-align: center; border-right: 2px solid var(--lake-pale); padding-right: 16px;
-}
-.weather-now .w-icon { font-size: 2.8rem; margin-bottom: 4px; }
-.weather-now .w-temp {
-  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 2.5rem;
-  color: var(--lake-deep); line-height: 1;
-}
-.weather-now .w-desc {
-  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.9rem;
-  color: var(--text-light); margin-top: 2px;
-}
-.weather-now .w-details {
-  display: flex; gap: 16px; margin-top: 14px; font-size: 0.88rem; color: var(--text-light);
-}
-.weather-now .w-details span { display: flex; align-items: center; gap: 4px; }
-.weather-forecast {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(90px, 1fr)); gap: 12px;
-  align-content: center;
-}
-.forecast-day {
-  text-align: center; padding: 10px 6px; border-radius: 12px;
-  background: var(--lake-whisper); transition: all 0.2s;
-}
-.forecast-day:hover { transform: translateY(-2px); background: var(--lake-pale); }
-.forecast-day .fd-name {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.78rem;
-  color: var(--lake-deep); margin-bottom: 3px;
-}
-.forecast-day .fd-icon { font-size: 1.4rem; margin-bottom: 3px; }
-.forecast-day .fd-temps {
-  font-family: 'Fredoka', sans-serif; font-size: 0.82rem;
-}
-.forecast-day .fd-hi { color: var(--sunset); font-weight: 600; }
-.forecast-day .fd-lo { color: var(--text-light); font-weight: 400; }
-.weather-loading {
-  display: flex; align-items: center; justify-content: center;
-  grid-column: 1 / -1; padding: 40px;
-  font-family: 'Caveat', cursive; font-size: 1.3rem; color: var(--text-light);
-}
-.weather-error { color: var(--sunset); font-family: 'Fredoka', sans-serif; text-align: center; padding: 20px; }
+/* SECTION HEADERS */
+.sec-h{font-size:1.3rem;font-weight:800;margin-bottom:16px}
+.sec-h2{font-size:1.05rem;font-weight:700;margin-bottom:10px}
 
-/* ===== ARRIVAL ===== */
-.arrival { background: var(--white); }
-.arrival-grid {
-  display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px;
-}
-.arrival-card {
-  background: var(--sand-light); border-radius: 14px; padding: 18px 20px;
-  border: 1.5px solid var(--sand); transition: all 0.3s; position: relative;
-}
-.arrival-card:hover { transform: translateY(-2px); box-shadow: 0 6px 18px rgba(107,82,64,0.06); }
-.arrival-card .card-icon { font-size: 1.6rem; margin-bottom: 8px; display: inline-block; }
-.arrival-card h3 {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1.05rem;
-  color: var(--lake-deep); margin-bottom: 6px;
-}
-.arrival-card p { color: var(--text-light); font-size: 0.88rem; line-height: 1.6; }
-.arrival-card .detail {
-  margin-top: 10px; padding-top: 10px; border-top: 1px dashed var(--sand);
-  font-family: 'Caveat', cursive; font-size: 1rem; color: var(--sunset);
-}
-.arrival-address {
-  margin-bottom: 20px; padding: 16px 22px; background: var(--lake-whisper);
-  border-radius: 12px; border-left: 4px solid var(--lake);
-  display: flex; align-items: center; gap: 12px;
-}
-.arrival-address .addr-icon { font-size: 1.5rem; }
-.arrival-address .addr-text h3 {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 1rem; color: var(--lake-deep);
-}
-.arrival-address .addr-text p { color: var(--text-light); font-size: 0.85rem; }
-.arrival-address .addr-link {
-  margin-left: auto;
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.82rem;
-  color: var(--white); background: var(--lake); padding: 8px 16px;
-  border-radius: 20px; text-decoration: none; transition: all 0.2s; white-space: nowrap;
-}
-.arrival-address .addr-link:hover { background: var(--lake-deep); }
+/* ABOUT HOUSE */
+.house-highlights{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:20px}
+.hh{display:flex;gap:12px;align-items:center;padding:14px;border:1px solid var(--border-light);border-radius:10px}
+.hh .hh-icon{font-size:1.5rem}
+.hh .hh-info .hh-val{font-weight:800;font-size:.95rem}
+.hh .hh-info .hh-label{font-size:.78rem;color:var(--mid)}
+.floor-tabs{display:flex;gap:0;border-bottom:2px solid var(--border-light);margin-bottom:16px}
+.ft{padding:10px 18px;font-family:inherit;font-size:.88rem;font-weight:700;border:none;background:none;color:var(--mid);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.ft:hover{color:var(--black)}.ft.active{color:var(--black);border-bottom-color:var(--black)}
+.fp{display:none;animation:fadeIn .3s ease}.fp.active{display:grid;grid-template-columns:1fr 1fr;gap:16px}
+.fp-svg{background:var(--bg-gray);border-radius:10px;padding:14px;display:flex;align-items:center;justify-content:center}
+.fp-rooms{display:flex;flex-direction:column;gap:6px}
+.rm{padding:10px 14px;border-radius:8px;border:1px solid var(--border-light);transition:border-color .15s}
+.rm:hover{border-color:var(--dark)}
+.rm h4{font-size:.88rem;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:6px}
+.rm .badge{font-size:.65rem;font-weight:700;background:var(--rose-light);color:var(--rose);padding:2px 7px;border-radius:4px}
+.rm p{font-size:.78rem;color:var(--mid);line-height:1.45}
+.rm-tags{display:flex;gap:4px;flex-wrap:wrap;margin-top:4px}
+.rm-tags span{font-size:.68rem;color:var(--mid);background:var(--bg-gray);padding:2px 7px;border-radius:4px}
 
-/* ===== ABOUT THE HOUSE ===== */
-.about-house { background: var(--sand-light); }
-.house-stats {
-  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px;
-}
-.house-stat {
-  background: white; border-radius: 10px; padding: 12px 18px;
-  display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--sand);
-}
-.house-stat .hs-icon { font-size: 1.3rem; }
-.house-stat .hs-val {
-  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--lake-deep);
-}
-.house-stat .hs-label { font-size: 0.78rem; color: var(--text-light); }
-.floor-tabs {
-  display: flex; gap: 6px; margin-bottom: 16px;
-}
-.floor-tab {
-  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.82rem;
-  padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--lake-pale);
-  background: white; color: var(--lake-deep); cursor: pointer; transition: all 0.2s;
-}
-.floor-tab:hover, .floor-tab.active { background: var(--lake); color: white; border-color: var(--lake); }
-.floor-content { display: none; animation: fadeIn 0.4s ease-out; }
-.floor-content.active { display: block; }
-.floor-layout {
-  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
-}
-.floor-plan-wrap {
-  background: white; border-radius: 14px; padding: 16px;
-  border: 1.5px solid var(--lake-pale); min-height: 280px;
-  display: flex; align-items: center; justify-content: center;
-}
-.floor-rooms { display: flex; flex-direction: column; gap: 8px; }
-.room-card {
-  background: white; border-radius: 10px; padding: 12px 16px;
-  border-left: 3px solid var(--lake-light); box-shadow: 0 1px 6px rgba(0,0,0,0.03);
-  transition: all 0.2s; cursor: default;
-}
-.room-card:hover { border-left-color: var(--sunset); }
-.room-card .rc-header {
-  display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;
-}
-.room-card h4 {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem; color: var(--lake-deep);
-  display: flex; align-items: center; gap: 6px;
-}
-.room-card .rc-badge {
-  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.68rem;
-  background: var(--lake-pale); color: var(--lake-deep); padding: 2px 8px; border-radius: 6px;
-}
-.room-card p { color: var(--text-light); font-size: 0.8rem; line-height: 1.45; }
-.room-card .rc-amenities {
-  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;
-}
-.room-card .rc-amenity {
-  font-size: 0.7rem; color: var(--text-light); background: var(--lake-whisper);
-  padding: 2px 7px; border-radius: 5px;
-}
-@media (max-width: 768px) {
-  .floor-layout { grid-template-columns: 1fr; }
-}
+/* AMENITIES/ESSENTIALS */
+.amen-grid{display:grid;grid-template-columns:1fr 1fr;gap:2px}
+.amen{display:flex;gap:12px;align-items:center;padding:12px 0;border-bottom:1px solid var(--border-light)}
+.amen .a-icon{font-size:1.3rem;width:28px;text-align:center;flex-shrink:0}
+.amen .a-text h4{font-size:.88rem;font-weight:700}
+.amen .a-text p{font-size:.78rem;color:var(--mid)}
 
-/* ===== WELCOME ===== */
-.welcome { background: var(--lake-whisper); }
-.welcome-grid {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 14px;
-}
-.welcome-card {
-  background: var(--white); border-radius: 14px; padding: 18px 20px;
-  transition: all 0.3s; border: 1.5px solid transparent; position: relative; overflow: hidden;
-}
-.welcome-card:hover { border-color: var(--lake-light); box-shadow: 0 6px 18px rgba(27,107,138,0.08); }
-.welcome-card .card-icon { font-size: 1.6rem; margin-bottom: 8px; display: inline-block; }
-.welcome-card h3 { font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.05rem; color:var(--lake-deep); margin-bottom:6px; }
-.welcome-card p { color: var(--text-light); font-size: 0.88rem; line-height: 1.6; }
-.welcome-card .detail {
-  margin-top:10px; padding-top:10px; border-top:1px dashed var(--lake-pale);
-  font-family:'Caveat',cursive; font-size:1rem; color:var(--sunset);
-}
+/* HOUSE GUIDE */
+.guide-tabs{display:flex;gap:0;border-bottom:2px solid var(--border-light);margin-bottom:14px}
+.gt{padding:8px 16px;font-family:inherit;font-size:.82rem;font-weight:700;border:none;background:none;color:var(--mid);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-2px;transition:all .15s}
+.gt:hover{color:var(--black)}.gt.active{color:var(--black);border-bottom-color:var(--black)}
+.gp{display:none;animation:fadeIn .3s ease}.gp.active{display:flex;flex-direction:column;gap:4px}
+.gi{display:flex;gap:10px;padding:10px 0;border-bottom:1px solid var(--border-light)}
+.gi .gi-icon{font-size:1.1rem;width:24px;text-align:center;flex-shrink:0;margin-top:1px}
+.gi h4{font-size:.85rem;font-weight:700;margin-bottom:1px}
+.gi p{font-size:.78rem;color:var(--mid);line-height:1.4}
 
-/* ===== HOUSE MANUAL ===== */
-.manual { background: var(--sand-light); }
-.manual-categories { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:20px; }
-.manual-tab {
-  font-family:'Fredoka',sans-serif; font-weight:500; font-size:0.85rem;
-  padding:7px 16px; border-radius:24px; border:1.5px solid var(--lake-pale);
-  background:white; color:var(--lake-deep); cursor:pointer; transition:all 0.25s;
-}
-.manual-tab:hover, .manual-tab.active { background:var(--lake); color:white; border-color:var(--lake); }
-.manual-content { display:none; animation:fadeIn 0.4s ease-out; }
-.manual-content.active { display:block; }
-@keyframes fadeIn { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:translateY(0)} }
-.manual-list { list-style:none; }
-.manual-list li {
-  background:white; padding:12px 16px; border-radius:10px; margin-bottom:8px;
-  display:flex; align-items:flex-start; gap:12px;
-  box-shadow:0 1px 8px rgba(0,0,0,0.03); transition:transform 0.2s;
-}
-.manual-list li:hover { transform:translateX(3px); }
-.manual-list .li-icon { font-size:1.2rem; flex-shrink:0; margin-top:2px; }
-.manual-list .li-content h4 { font-family:'Fredoka',sans-serif; font-weight:600; font-size:0.95rem; color:var(--lake-deep); margin-bottom:2px; }
-.manual-list .li-content p { color:var(--text-light); font-size:0.85rem; line-height:1.5; }
+/* LOCAL SPOTS */
+.spots-map{border-radius:12px;overflow:hidden;height:280px;margin-bottom:16px;border:1px solid var(--border)}
+.spots-controls{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:6px}
+.spots-filters{display:flex;gap:4px;flex-wrap:wrap}
+.sf{font-family:inherit;font-size:.78rem;font-weight:600;padding:6px 14px;border-radius:20px;border:1px solid var(--border);background:white;color:var(--dark);cursor:pointer;transition:all .15s}
+.sf:hover,.sf.active{background:var(--black);color:white;border-color:var(--black)}
+.spots-sort select{font-family:inherit;font-size:.78rem;padding:6px 10px;border:1px solid var(--border);border-radius:8px;background:white}
+.spot-cat{border-bottom:1px solid var(--border-light)}
+.spot-cat-head{display:flex;align-items:center;justify-content:space-between;padding:12px 0;cursor:pointer;transition:color .15s}
+.spot-cat-head:hover{color:var(--rose)}
+.spot-cat-head h4{font-size:.95rem;font-weight:700;display:flex;align-items:center;gap:8px}
+.spot-cat-head .sc-cnt{font-size:.78rem;font-weight:500;color:var(--mid)}
+.spot-cat-head .sc-chev{font-size:.65rem;color:var(--light);transition:transform .3s}
+.spot-cat-head.open .sc-chev{transform:rotate(180deg)}
+.spot-items{max-height:0;overflow:hidden;transition:max-height .4s ease}
+.spot-items.open{max-height:4000px}
+.spot{display:flex;align-items:center;gap:10px;padding:10px 12px;border-radius:8px;cursor:pointer;transition:background .15s}
+.spot:hover{background:var(--bg-gray)}
+.spot .sp-icon{font-size:1.1rem;flex-shrink:0}
+.spot .sp-info{flex:1;min-width:0}
+.spot .sp-info h5{font-size:.85rem;font-weight:700}
+.spot .sp-info p{font-size:.74rem;color:var(--mid);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.spot .sp-rate{font-size:.78rem;font-weight:700;color:var(--black);white-space:nowrap}
+.spot .sp-rate span{font-weight:400;color:var(--mid)}
+.spot .sp-right{text-align:right;flex-shrink:0;min-width:60px}
+.spot .sp-dist{font-size:.82rem;font-weight:700;display:block}
+.spot .sp-link{font-size:.7rem;color:var(--teal);text-decoration:none;font-weight:600}
+.spot .sp-link:hover{text-decoration:underline}
 
-/* ===== LOCAL GUIDE ===== */
-.guide { background: white; }
-.guide-map {
-  border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(14,66,87,0.08);
-  border: 2px solid var(--lake-pale); margin-bottom: 24px; height: 320px; z-index: 1;
-}
-.guide-filters {
-  display: flex; flex-wrap: wrap; gap: 6px; margin-bottom: 16px;
-}
-.guide-filter {
-  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.8rem;
-  padding: 5px 14px; border-radius: 20px; border: 1.5px solid var(--lake-pale);
-  background: white; color: var(--lake-deep); cursor: pointer; transition: all 0.2s;
-  display: flex; align-items: center; gap: 5px;
-}
-.guide-filter:hover, .guide-filter.active {
-  background: var(--lake); color: white; border-color: var(--lake);
-}
-.guide-filter .filter-count {
-  font-size: 0.7rem; background: rgba(0,0,0,0.1); padding: 1px 6px;
-  border-radius: 8px;
-}
-.guide-filter.active .filter-count { background: rgba(255,255,255,0.25); }
-.guide-sort {
-  display: flex; align-items: center; gap: 10px; margin-bottom: 14px;
-  font-family: 'Fredoka', sans-serif; font-size: 0.82rem; color: var(--text-light);
-}
-.guide-sort select {
-  font-family: 'Fredoka', sans-serif; font-size: 0.82rem; padding: 4px 10px;
-  border: 1.5px solid var(--lake-pale); border-radius: 8px; background: white;
-  color: var(--lake-deep); cursor: pointer; outline: none;
-}
-/* Collapsible category groups */
-.guide-cat-group { margin-bottom: 8px; }
-.guide-cat-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 10px 16px; background: var(--lake-pale); border-radius: 10px;
-  cursor: pointer; transition: all 0.2s; user-select: none;
-}
-.guide-cat-header:hover { background: var(--lake-light); color: white; }
-.guide-cat-header h4 {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.92rem;
-  color: var(--lake-deep); display: flex; align-items: center; gap: 8px;
-}
-.guide-cat-header:hover h4 { color: white; }
-.guide-cat-header .cat-count {
-  font-family: 'Fredoka', sans-serif; font-size: 0.78rem; color: var(--text-light);
-}
-.guide-cat-header:hover .cat-count { color: rgba(255,255,255,0.8); }
-.guide-cat-header .cat-chevron {
-  transition: transform 0.3s; font-size: 0.8rem; color: var(--text-light);
-}
-.guide-cat-header:hover .cat-chevron { color: white; }
-.guide-cat-header.open .cat-chevron { transform: rotate(180deg); }
-.guide-cat-items {
-  max-height: 0; overflow: hidden; transition: max-height 0.4s ease;
-}
-.guide-cat-items.open { max-height: 2000px; }
-.guide-list { display: flex; flex-direction: column; gap: 6px; padding-top: 6px; }
-.guide-item {
-  display: grid; grid-template-columns: 2rem 1fr auto; gap: 10px; align-items: center;
-  background: var(--lake-whisper); border-radius: 10px; padding: 10px 14px;
-  border: 1px solid transparent; transition: all 0.2s; cursor: pointer;
-}
-.guide-item:hover { border-color: var(--lake-light); box-shadow: 0 2px 8px rgba(27,107,138,0.05); }
-.guide-item .gi-icon { font-size: 1.4rem; }
-.guide-item .gi-info h3 {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.92rem;
-  color: var(--lake-deep); margin-bottom: 1px;
-}
-.guide-item .gi-desc { color: var(--text-light); font-size: 0.8rem; line-height: 1.4; margin-bottom: 3px; }
-.guide-item .gi-meta { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
-.guide-item .gi-stars { color: #f5a623; font-size: 0.78rem; letter-spacing: 0.5px; }
-.guide-item .gi-score { font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.78rem; color: var(--lake-deep); }
-.guide-item .gi-count { font-size: 0.72rem; color: var(--text-light); }
-.guide-item .gi-tag { display: none; }
-.guide-item .gi-right {
-  text-align: right; display: flex; flex-direction: column; align-items: flex-end; gap: 3px; min-width: 65px;
-}
-.guide-item .gi-dist {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.82rem; color: var(--lake);
-}
-.guide-item .gi-dir {
-  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.72rem;
-  color: var(--lake); text-decoration: none; background: var(--lake-pale);
-  padding: 3px 10px; border-radius: 8px; transition: all 0.2s;
-}
-.guide-item .gi-dir:hover { background: var(--lake); color: white; }
-.guide-empty {
-  text-align: center; padding: 24px; color: var(--text-light);
-  font-family: 'Caveat', cursive; font-size: 1.1rem;
-}
+/* HOA */
+.hoa-warn{background:var(--rose-light);border:1px solid rgba(255,56,92,.15);border-radius:10px;padding:14px 18px;margin-bottom:18px;display:flex;gap:10px;align-items:flex-start}
+.hoa-warn .hw-icon{font-size:1.1rem;flex-shrink:0}
+.hoa-warn h4{font-size:.88rem;font-weight:700;margin-bottom:2px}
+.hoa-warn p{font-size:.8rem;color:var(--dark);line-height:1.5}
+.hoa-grid{display:grid;grid-template-columns:1fr 1fr;gap:6px;margin-bottom:16px}
+.hoa-r{padding:10px 14px;border:1px solid var(--border-light);border-radius:8px}
+.hoa-r h4{font-size:.82rem;font-weight:700;margin-bottom:2px;display:flex;align-items:center;gap:5px}
+.hoa-r p{font-size:.74rem;color:var(--mid);line-height:1.4}
+.hoa-links{display:flex;gap:6px;flex-wrap:wrap}
+.hl{font-family:inherit;font-size:.8rem;font-weight:700;padding:8px 16px;border-radius:8px;text-decoration:none;transition:all .15s}
+.hl.primary{background:var(--black);color:white}.hl.primary:hover{background:#000}
+.hl.secondary{background:white;color:var(--dark);border:1px solid var(--border)}.hl.secondary:hover{border-color:var(--black)}
 
-/* ===== MAP (bottom) ===== */
-.map-section { background: var(--lake-whisper); padding: 0; }
-.map-section .container { max-width: 1100px; margin: 0 auto; padding: 36px 24px; }
-.map-embed {
-  border-radius: 14px; overflow: hidden; box-shadow: 0 4px 16px rgba(14,66,87,0.08);
-  border: 2px solid white;
-}
-.map-embed iframe { width: 100%; height: 300px; border: 0; display: block; }
+/* GUESTBOOK */
+.gb-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-bottom:20px}
+.gb{padding:16px 18px;border:1px solid var(--border-light);border-radius:10px}
+.gb p{font-size:.88rem;line-height:1.55;color:var(--dark)}
+.gb .gb-a{font-size:.82rem;font-weight:700;color:var(--black);margin-top:8px}
+.gb-form{max-width:480px}
+.gb-form h4{font-size:1rem;font-weight:700;margin-bottom:10px}
+.gb-form input,.gb-form textarea{width:100%;padding:12px 14px;border:1.5px solid var(--border);border-radius:8px;font-family:inherit;font-size:.88rem;margin-bottom:8px;outline:none;transition:border .2s}
+.gb-form input:focus,.gb-form textarea:focus{border-color:var(--black)}
+.gb-form textarea{min-height:70px;resize:vertical}
+.gb-form button{padding:12px 24px;background:var(--rose);color:white;border:none;border-radius:8px;font-family:inherit;font-weight:700;font-size:.88rem;cursor:pointer;transition:background .2s}
+.gb-form button:hover{background:var(--rose-dark)}
 
-/* ===== PHOTO WALL ===== */
-.photos { background: var(--lake-deep); color: white; }
-.photos .section-tag { color: var(--sunset-warm); }
-.photos .section-title { color: white; }
-.photos .section-desc { color: rgba(255,255,255,0.7); }
-.photo-masonry { columns:3; column-gap:16px; }
-.photo-item {
-  break-inside:avoid; margin-bottom:16px; border-radius:14px; overflow:hidden;
-  position:relative; cursor:pointer; transition:transform 0.3s;
-}
-.photo-item:hover { transform:scale(1.02); }
-.photo-placeholder { width:100%; display:block; border-radius:14px; }
-.photo-overlay {
-  position:absolute; bottom:0; left:0; right:0; padding:16px;
-  background:linear-gradient(transparent,rgba(0,0,0,0.6)); opacity:0; transition:opacity 0.3s;
-}
-.photo-item:hover .photo-overlay { opacity:1; }
-.photo-overlay .caption { font-family:'Caveat',cursive; font-size:1.2rem; color:white; }
-.photo-overlay .date { font-size:0.8rem; color:rgba(255,255,255,0.7); margin-top:2px; }
-.photo-cta { text-align:center; margin-top:28px; }
-.photo-cta p { font-family:'Caveat',cursive; font-size:1.2rem; color:var(--sunset-warm); margin-bottom:8px; }
+/* FAMILY */
+.fam-row{display:flex;gap:32px;flex-wrap:wrap;margin-bottom:16px}
+.fam-stat{text-align:center}
+.fam-stat .fn{font-size:2rem;font-weight:800;line-height:1}
+.fam-stat .fl{font-size:.75rem;color:var(--mid);font-weight:600;text-transform:uppercase;letter-spacing:.04em}
+.fam-note{font-size:.95rem;color:var(--dark);max-width:540px;line-height:1.6}
 
-/* ===== GUESTBOOK ===== */
-.guestbook { background: var(--sand-light); }
-.guestbook-entries {
-  display:grid; grid-template-columns:repeat(auto-fit,minmax(240px,1fr)); gap:14px; margin-bottom:28px;
-}
-.gb-entry {
-  background:white; border-radius:12px; padding:18px 20px;
-  box-shadow:0 2px 8px rgba(0,0,0,0.03); position:relative;
-  transform:rotate(var(--tilt)); transition:transform 0.3s;
-}
-.gb-entry:hover { transform:rotate(0deg) translateY(-3px); }
-.gb-entry::before {
-  content:'\201C'; position:absolute; top:8px; left:12px;
-  font-family:'Lora',serif; font-size:2.8rem; color:var(--lake-pale); line-height:1;
-}
-.gb-entry p {
-  font-family:'Lora',serif; font-style:italic; color:var(--text); line-height:1.5;
-  font-size:0.85rem; position:relative; z-index:1;
-}
-.gb-entry .gb-author {
-  margin-top:10px; font-family:'Caveat',cursive; font-size:1.05rem;
-  color:var(--sunset); font-style:normal;
-}
-.gb-form {
-  max-width:500px; margin:0 auto; background:white; border-radius:16px;
-  padding:24px; box-shadow:0 4px 16px rgba(0,0,0,0.04);
-}
-.gb-form h3 {
-  font-family:'Fredoka',sans-serif; font-weight:600; font-size:1.1rem;
-  color:var(--lake-deep); margin-bottom:14px; text-align:center;
-}
-.gb-form input, .gb-form textarea {
-  width:100%; padding:10px 14px; border:1.5px solid var(--lake-pale); border-radius:10px;
-  font-family:'Source Sans 3',sans-serif; font-size:0.92rem; color:var(--text);
-  margin-bottom:10px; transition:border-color 0.2s; outline:none; background:var(--lake-whisper);
-}
-.gb-form input:focus, .gb-form textarea:focus { border-color:var(--lake-light); background:white; }
-.gb-form textarea { min-height:80px; resize:vertical; }
-.gb-form button {
-  width:100%; padding:12px; background:var(--sunset); color:white; border:none; border-radius:10px;
-  font-family:'Fredoka',sans-serif; font-weight:600; font-size:0.95rem; cursor:pointer; transition:all 0.3s;
-}
-.gb-form button:hover { background:var(--sunset-hot); }
+/* FULL WIDTH SECTIONS */
+.full-sec{max-width:1120px;margin:0 auto;padding:0 24px}
 
-/* ===== FAMILY ===== */
-.family { background:white; text-align:center; }
-.family-tagline { font-family:'Caveat',cursive; font-size:1.3rem; color:var(--sunset); margin-bottom:24px; }
-.family-stats { display:flex; justify-content:center; gap:36px; flex-wrap:wrap; margin-bottom:28px; }
-.stat { text-align:center; }
-.stat .stat-num { font-family:'Fredoka',sans-serif; font-weight:700; font-size:2.4rem; color:var(--lake); line-height:1; }
-.stat .stat-label { font-family:'Caveat',cursive; font-size:1.1rem; color:var(--text-light); margin-top:2px; }
-.family-emoji-row {
-  display:flex; justify-content:center; gap:4px; flex-wrap:wrap;
-  font-size:1.6rem; line-height:1; margin-bottom:24px;
-}
-.family-note {
-  font-family:'Lora',serif; font-style:italic; font-size:1.15rem;
-  color:var(--text-light); max-width:600px; margin:0 auto; line-height:1.8;
-}
+/* WEATHER */
+.wx{display:flex;gap:20px;align-items:center;background:var(--bg-gray);border-radius:12px;padding:20px 24px}
+.wx-now{text-align:center;min-width:130px;padding-right:20px;border-right:1px solid var(--border)}
+.wx-now .wx-icon{font-size:2.2rem}
+.wx-now .wx-temp{font-size:2.4rem;font-weight:800;line-height:1}
+.wx-now .wx-desc{font-size:.82rem;color:var(--mid)}
+.wx-now .wx-det{display:flex;gap:10px;font-size:.75rem;color:var(--mid);margin-top:4px;justify-content:center}
+.wx-fc{display:flex;gap:8px;flex:1}
+.wx-day{text-align:center;flex:1;padding:8px 4px;border-radius:8px;transition:background .15s}
+.wx-day:hover{background:white}
+.wx-day .wd-name{font-size:.72rem;font-weight:700;color:var(--mid);margin-bottom:3px}
+.wx-day .wd-icon{font-size:1.2rem;margin-bottom:3px}
+.wx-day .wd-hi{font-size:.82rem;font-weight:700}
+.wx-day .wd-lo{font-size:.75rem;color:var(--mid)}
 
-/* ===== LAKE ASSOCIATION (HOA) ===== */
-.hoa { background: var(--lake-whisper); }
-.hoa-alert {
-  background: linear-gradient(135deg, #fff3e0, #ffe0b2); border-radius: 12px;
-  padding: 14px 18px; margin-bottom: 20px; display: flex; align-items: flex-start; gap: 12px;
-  border: 1.5px solid #ffcc02;
-}
-.hoa-alert .alert-icon { font-size: 1.4rem; flex-shrink: 0; }
-.hoa-alert .alert-content h4 {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.95rem; color: var(--lake-deep); margin-bottom: 2px;
-}
-.hoa-alert .alert-content p { color: var(--text-light); font-size: 0.85rem; line-height: 1.5; }
-.hoa-rules {
-  display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 10px; margin-bottom: 20px;
-}
-.hoa-rule {
-  background: white; border-radius: 10px; padding: 14px 16px;
-  border-left: 3px solid var(--lake); box-shadow: 0 1px 6px rgba(0,0,0,0.03);
-  transition: all 0.2s;
-}
-.hoa-rule:hover { box-shadow: 0 4px 12px rgba(27,107,138,0.06); }
-.hoa-rule .rule-icon { font-size: 1.2rem; margin-bottom: 6px; }
-.hoa-rule h4 {
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem;
-  color: var(--lake-deep); margin-bottom: 3px;
-}
-.hoa-rule p { color: var(--text-light); font-size: 0.82rem; line-height: 1.5; }
-.hoa-rule .rule-fine {
-  margin-top: 6px; font-family: 'Fredoka', sans-serif; font-weight: 500;
-  font-size: 0.72rem; color: var(--sunset-hot); background: rgba(232,93,58,0.08);
-  padding: 2px 8px; border-radius: 6px; display: inline-block;
-}
-.hoa-links {
-  display: flex; flex-wrap: wrap; gap: 8px;
-}
-.hoa-link {
-  display: inline-flex; align-items: center; gap: 7px;
-  padding: 8px 16px; border-radius: 10px; text-decoration: none;
-  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.82rem;
-  transition: all 0.2s;
-}
-.hoa-link.primary { background: var(--lake); color: white; }
-.hoa-link.primary:hover { background: var(--lake-deep); }
-.hoa-link.secondary { background: white; color: var(--lake-deep); border: 1.5px solid var(--lake-pale); }
-.hoa-link.secondary:hover { border-color: var(--lake); }
-.hoa-link .link-icon { font-size: 1rem; }
+/* MAP */
+.map-frame{border-radius:12px;overflow:hidden;border:1px solid var(--border)}
+.map-frame iframe{width:100%;height:280px;border:0;display:block}
 
-/* ===== FOOTER ===== */
-footer {
-  background:var(--lake-deep); color:rgba(255,255,255,0.6); text-align:center; padding:32px 24px;
-}
-footer .footer-house { font-family:'Fredoka',sans-serif; font-weight:700; font-size:1.1rem; color:white; margin-bottom:4px; }
-footer .footer-addr { font-size:0.82rem; margin-bottom:16px; }
-footer .footer-wave { font-size:1.5rem; margin-bottom:10px; }
-footer .footer-copy { font-size:0.75rem; color:rgba(255,255,255,0.35); }
+/* FOOTER */
+footer{border-top:1px solid var(--border-light);padding:32px 24px;text-align:center;max-width:1120px;margin:0 auto}
+footer .f-name{font-weight:800;font-size:.95rem;margin-bottom:4px}
+footer .f-addr{font-size:.82rem;color:var(--mid)}
+footer .f-copy{font-size:.72rem;color:var(--light);margin-top:12px}
 
-/* ===== RESPONSIVE ===== */
-@media (max-width: 768px) {
-  .nav-links { display:none; }
-  .photo-masonry { columns:2; }
-  .family-stats { gap:20px; }
-  section { padding:36px 16px; }
-  .hero { min-height:85vh; }
-  .sun { width:70px; height:70px; top:8%; right:10%; }
-  .weather-widget { grid-template-columns:1fr; }
-  .weather-now { border-right:none; border-bottom:1.5px solid var(--lake-pale); padding-right:0; padding-bottom:16px; }
-  .arrival-address { flex-direction:column; text-align:center; }
-  .arrival-address .addr-link { margin-left:0; }
-  .arrival-grid { grid-template-columns:1fr; }
-  .guide-map { height: 250px; }
+@keyframes fadeIn{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:translateY(0)}}
+@media(max-width:900px){
+  .layout{grid-template-columns:1fr;gap:24px}
+  .sidebar{position:static}
+  .photos-hero{grid-template-columns:1fr 1fr;height:260px}
+  .photos-hero .ph:first-child{grid-row:auto}
+  .house-highlights{grid-template-columns:1fr 1fr}
+  .fp.active{grid-template-columns:1fr}
+  .hoa-grid{grid-template-columns:1fr}
+  .gb-grid{grid-template-columns:1fr}
+  .wx{flex-direction:column}.wx-now{border-right:none;border-bottom:1px solid var(--border);padding-right:0;padding-bottom:14px}
+  .amen-grid{grid-template-columns:1fr}
+  .nav-links{display:none}
 }
-@media (max-width: 480px) {
-  .photo-masonry { columns:1; }
-  .welcome-grid { grid-template-columns:1fr; }
-}
+.site{display:none}.site.show{display:block}
 </style>
 </head>
 <body>
 
-<!-- PASSWORD GATE -->
-<div class="pw-gate" id="pwGate">
-  <div class="pw-box">
-    <div class="pw-wave">&#127754;</div>
-    <h2>The Dickson Lake House</h2>
-    <div class="pw-sub">Family &amp; friends only!</div>
-    <input type="password" id="pwInput" placeholder="Enter the password" autofocus>
-    <button onclick="checkPassword()">Let Me In</button>
-    <div class="pw-error" id="pwError"></div>
+<!-- PASSWORD -->
+<div class="pw" id="pw"><div class="pw-in">
+  <h2>&#127754; Dickson Lake House</h2>
+  <div class="pw-sub">Enter the family password</div>
+  <input type="password" id="pwIn" placeholder="Password" autofocus>
+  <button onclick="checkPw()">Continue</button>
+  <div class="pw-err" id="pwErr"></div>
+</div></div>
+
+<div class="site" id="site">
+
+<!-- NAV -->
+<nav><div class="nav-c">
+  <a href="#" class="nav-logo">&#127754; Dickson Lake House</a>
+  <div class="nav-links">
+    <a href="#house">The House</a>
+    <a href="#essentials">Essentials</a>
+    <a href="#guide-sec">Guide</a>
+    <a href="#local">Local Spots</a>
+    <a href="#hoa">Lake Rules</a>
+    <a href="#guestbook">Guestbook</a>
+  </div>
+</div></nav>
+
+<!-- PHOTO GRID -->
+<div class="photos-hero" id="photos">
+  <div class="ph"><svg viewBox="0 0 600 500"><rect width="600" height="500" fill="#c8dde6"/><text x="300" y="250" text-anchor="middle" fill="rgba(0,0,0,.12)" font-family="Nunito Sans" font-size="22" font-weight="800">Lake View</text></svg><div class="ph-label">View from the dock</div></div>
+  <div class="ph"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#d6c8b8"/><text x="200" y="125" text-anchor="middle" fill="rgba(0,0,0,.12)" font-family="Nunito Sans" font-size="16" font-weight="800">Living Room</text></svg><div class="ph-label">Vaulted ceilings</div></div>
+  <div class="ph"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#b8c8a8"/><text x="200" y="125" text-anchor="middle" fill="rgba(0,0,0,.12)" font-family="Nunito Sans" font-size="16" font-weight="800">Backyard</text></svg><div class="ph-label">Grand lawn to lake</div></div>
+  <div class="ph"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#e8d8c8"/><text x="200" y="125" text-anchor="middle" fill="rgba(0,0,0,.12)" font-family="Nunito Sans" font-size="16" font-weight="800">Kitchen</text></svg><div class="ph-label">Chef's kitchen</div></div>
+  <div class="ph"><svg viewBox="0 0 400 250"><rect width="400" height="250" fill="#a8c8d8"/><text x="200" y="125" text-anchor="middle" fill="rgba(0,0,0,.12)" font-family="Nunito Sans" font-size="16" font-weight="800">Sunset</text></svg><div class="ph-label">Evening on the water</div></div>
+</div>
+
+<!-- TITLE BAR -->
+<div class="title-bar">
+  <h1>Lakefront Home on Middle Straits Lake</h1>
+  <div class="title-meta">
+    <span class="tm-stars">&#9733; 5.0</span>
+    <span class="tm-dot">&middot;</span>
+    <span>3 reviews</span>
+    <span class="tm-dot">&middot;</span>
+    <a href="https://maps.google.com/?q=3726+Elder+Road+South+West+Bloomfield+MI" target="_blank">West Bloomfield, Michigan</a>
   </div>
 </div>
 
-<!-- SITE CONTENT (hidden until password entered) -->
-<div class="site-content" id="siteContent">
+<!-- TWO COL LAYOUT -->
+<div class="layout">
+<div class="main">
 
-<!-- NAV -->
-<nav id="mainNav">
-  <div class="nav-inner">
-    <a href="#" class="nav-logo"><span class="wave-icon">&#127754;</span> The Dickson Lake House</a>
-    <div class="nav-links">
-      <a href="#arrival">Arrival</a>
-      <a href="#about-house">The House</a>
-      <a href="#welcome">Welcome</a>
-      <a href="#manual">House Guide</a>
-      <a href="#guide">Local Spots</a>
-      <a href="#hoa">Lake Rules</a>
-      <a href="#photos">Memories</a>
-      <a href="#guestbook">Guestbook</a>
-      <a href="#weather">Weather</a>
-    </div>
-  </div>
-</nav>
-
-<!-- HERO -->
-<section class="hero">
-  <div class="sun"></div>
-  <div class="cloud cloud-1"></div>
-  <div class="cloud cloud-2"></div>
-  <div class="cloud cloud-3"></div>
-  <div class="lake-shimmer"></div>
-  <div class="hero-content">
-    <div class="hero-pre">Welcome to</div>
-    <h1 class="hero-title">The Dickson<br>Lake House</h1>
-    <p class="hero-subtitle">Middle Straits Lake &middot; West Bloomfield, Michigan</p>
-    <a href="#arrival" class="hero-cta">Come On In &#9728;&#65039;</a>
-  </div>
-</section>
-
-<!-- ARRIVAL -->
-<section class="arrival" id="arrival">
-  <div class="container">
-    <div class="section-tag">You're almost here</div>
-    <h2 class="section-title">Getting Here &#128663;</h2>
-    <p class="section-desc">Everything you need to know to find us and get settled when you pull up.</p>
-    <div class="arrival-address">
-      <div class="addr-icon">&#128205;</div>
-      <div class="addr-text">
-        <h3>3726 Elder Road South</h3>
-        <p>West Bloomfield, MI 48324 &mdash; Right on Middle Straits Lake</p>
-      </div>
-      <a href="https://maps.google.com/?q=3726+Elder+Road+South+West+Bloomfield+MI" target="_blank" class="addr-link">Open in Maps &rarr;</a>
-    </div>
-    <div class="arrival-grid">
-      <div class="arrival-card">
-        <div class="card-icon">&#128663;</div>
-        <h3>Parking</h3>
-        <p>Parking in the driveway is first come, first served. If the driveway is full, there's additional parking available on the street. Just be mindful not to block the neighbors.</p>
-        <div class="detail">Early bird gets the driveway spot!</div>
-      </div>
-      <div class="arrival-card">
-        <div class="card-icon">&#128682;</div>
-        <h3>Come On In</h3>
-        <p>Head right in through the front door. If it's your first time, take a minute to orient yourself &mdash; the lake is straight out the back, and this website has everything else you need.</p>
-        <div class="detail">Kick off your shoes &mdash; you're home</div>
-      </div>
-      <div class="arrival-card">
-        <div class="card-icon">&#128230;</div>
-        <h3>What to Bring</h3>
-        <p>We've got the basics covered &mdash; towels, linens, kitchen essentials. Just bring your clothes, sunscreen, and whatever you like to drink. Maybe a card game or two.</p>
-        <div class="detail">Swimsuit is non-negotiable &#127946;</div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- ABOUT THE HOUSE -->
-<section class="about-house" id="about-house">
-  <div class="container">
-    <div class="section-tag">Your home on the lake</div>
-    <h2 class="section-title">About the House &#127969;</h2>
-    <p class="section-desc">8,000+ square feet on nearly an acre with 114 feet of private lakefront. Three levels, panoramic views, and room for the whole family.</p>
-
-    <div class="house-stats">
-      <div class="house-stat"><span class="hs-icon">&#128719;&#65039;</span><div><div class="hs-val">5</div><div class="hs-label">Bedrooms</div></div></div>
-      <div class="house-stat"><span class="hs-icon">&#128704;</span><div><div class="hs-val">5.5</div><div class="hs-label">Bathrooms</div></div></div>
-      <div class="house-stat"><span class="hs-icon">&#128208;</span><div><div class="hs-val">8,000+</div><div class="hs-label">Sq Ft</div></div></div>
-      <div class="house-stat"><span class="hs-icon">&#127754;</span><div><div class="hs-val">114 ft</div><div class="hs-label">Lake Frontage</div></div></div>
-      <div class="house-stat"><span class="hs-icon">&#128663;</span><div><div class="hs-val">3</div><div class="hs-label">Car Garage</div></div></div>
-      <div class="house-stat"><span class="hs-icon">&#127795;</span><div><div class="hs-val">~1 acre</div><div class="hs-label">Lot</div></div></div>
+  <!-- ABOUT THE HOUSE -->
+  <section id="house">
+    <h2 class="sec-h">Entire home hosted by Stan &amp; Heather Dickson</h2>
+    <div class="house-highlights">
+      <div class="hh"><div class="hh-icon">&#128719;&#65039;</div><div class="hh-info"><div class="hh-val">5 bedrooms</div><div class="hh-label">6th flex room in basement</div></div></div>
+      <div class="hh"><div class="hh-icon">&#128704;</div><div class="hh-info"><div class="hh-val">5.5 bathrooms</div><div class="hh-label">Ensuite in primary + bed 5</div></div></div>
+      <div class="hh"><div class="hh-icon">&#128208;</div><div class="hh-info"><div class="hh-val">8,000+ sq ft</div><div class="hh-label">3 levels of living space</div></div></div>
+      <div class="hh"><div class="hh-icon">&#127754;</div><div class="hh-info"><div class="hh-val">114 ft lakefront</div><div class="hh-label">Private on Middle Straits</div></div></div>
+      <div class="hh"><div class="hh-icon">&#128663;</div><div class="hh-info"><div class="hh-val">3-car garage</div><div class="hh-label">+ street parking</div></div></div>
+      <div class="hh"><div class="hh-icon">&#127795;</div><div class="hh-info"><div class="hh-val">~1 acre lot</div><div class="hh-label">Grand lawn to the water</div></div></div>
     </div>
 
     <div class="floor-tabs">
-      <button class="floor-tab active" data-floor="main">Main Level</button>
-      <button class="floor-tab" data-floor="upper">Upper Level</button>
-      <button class="floor-tab" data-floor="lower">Walkout Basement</button>
+      <button class="ft active" data-fl="main">Main Level</button>
+      <button class="ft" data-fl="upper">Upper Level</button>
+      <button class="ft" data-fl="lower">Walkout Basement</button>
     </div>
 
-    <!-- MAIN LEVEL -->
-    <div class="floor-content active" id="floor-main">
-      <div class="floor-layout">
-        <div class="floor-plan-wrap">
-          <svg viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:460px;">
-            <rect x="0" y="0" width="460" height="340" rx="12" fill="#f0f8fb"/>
-            <text x="230" y="20" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" fill="#5a727d">MAIN LEVEL &mdash; Lake Side &#8593;</text>
-            <!-- Living Room -->
-            <rect x="20" y="30" width="180" height="120" rx="6" fill="#d4ecf5" stroke="#1b6b8a" stroke-width="1.5"/>
-            <text x="110" y="80" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Living Room</text>
-            <text x="110" y="96" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Vaulted ceilings &bull; Fireplace</text>
-            <text x="110" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Floor-to-ceiling lake views</text>
-            <!-- Kitchen -->
-            <rect x="210" y="30" width="230" height="120" rx="6" fill="#faf3e6" stroke="#f5e6c8" stroke-width="1.5"/>
-            <text x="325" y="72" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Chef's Kitchen</text>
-            <text x="325" y="88" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Dual Subzero &bull; Thermador ovens</text>
-            <text x="325" y="102" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">2 sinks &bull; 2 dishwashers &bull; Walk-in pantry</text>
-            <text x="325" y="116" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Bar seating &bull; Beverage fridge</text>
-            <!-- Family Room -->
-            <rect x="20" y="160" width="140" height="80" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="90" y="196" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Family Room</text>
-            <text x="90" y="212" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">French doors &bull; Sunlit</text>
-            <!-- Study -->
-            <rect x="170" y="160" width="130" height="80" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="235" y="196" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Waterside Study</text>
-            <text x="235" y="212" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Balcony &bull; Lake sunset views</text>
-            <!-- Dining / Bar -->
-            <rect x="310" y="160" width="130" height="80" rx="6" fill="#faf3e6" stroke="#f5e6c8" stroke-width="1.5"/>
-            <text x="375" y="196" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Dining &amp; Bar</text>
-            <text x="375" y="212" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Open to kitchen &amp; living</text>
-            <!-- Entry -->
-            <rect x="150" y="260" width="160" height="60" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="230" y="290" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Entry &amp; Foyer</text>
-            <text x="230" y="306" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Panoramic lake views on entry</text>
-            <!-- Arrows -->
-            <text x="230" y="255" text-anchor="middle" font-size="10" fill="#5a727d">&#8593;</text>
-            <!-- Lake indicator -->
-            <rect x="0" y="0" width="460" height="6" rx="3" fill="#3da5c2" opacity="0.4"/>
-          </svg>
-        </div>
-        <div class="floor-rooms">
-          <div class="room-card">
-            <div class="rc-header"><h4>&#127968; Step-Down Living Room</h4></div>
-            <p>Vaulted double-height ceilings with a gas fireplace. Floor-to-ceiling windows across the entire back wall with panoramic lake views.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Gas Fireplace</span><span class="rc-amenity">Vaulted Ceiling</span><span class="rc-amenity">Lake Views</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#127859; Chef's Kitchen</h4></div>
-            <p>Thermador double ovens with warming drawer, dual Subzero refrigerators, two sinks, two dishwashers, walk-in pantry, beverage fridge, and bar seating.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Dual Subzero</span><span class="rc-amenity">Thermador</span><span class="rc-amenity">Walk-in Pantry</span><span class="rc-amenity">Bar Seating</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#128218; Waterside Study</h4></div>
-            <p>Private study with French doors, its own balcony overlooking the lake. Perfect for morning coffee or watching the sunset.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Private Balcony</span><span class="rc-amenity">French Doors</span><span class="rc-amenity">Lake Views</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#127770; Family Room</h4></div>
-            <p>Sunlit room with beautiful French doors. Opens to the main living area. Cozy spot for reading, board games, or just hanging out.</p>
-          </div>
-        </div>
+    <div class="fp active" id="fl-main">
+      <div class="fp-svg"><svg viewBox="0 0 460 310" style="width:100%;max-width:460px"><rect width="460" height="310" rx="8" fill="#f7f7f7"/><rect width="460" height="4" rx="2" fill="#008489" opacity=".25"/><text x="230" y="17" text-anchor="middle" font-family="Nunito Sans" font-size="9" fill="#717171" font-weight="700">MAIN LEVEL — Lake Side ↑</text><rect x="16" y="26" width="180" height="105" rx="5" fill="white" stroke="#008489" stroke-width="1.5"/><text x="106" y="68" text-anchor="middle" font-family="Nunito Sans" font-size="11" font-weight="800" fill="#222">Living Room</text><text x="106" y="82" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Vaulted ceilings · Fireplace</text><text x="106" y="94" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Floor-to-ceiling lake views</text><rect x="206" y="26" width="238" height="105" rx="5" fill="white" stroke="#ddd"/><text x="325" y="62" text-anchor="middle" font-family="Nunito Sans" font-size="11" font-weight="800" fill="#222">Chef's Kitchen</text><text x="325" y="76" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Dual Subzero · Thermador ovens</text><text x="325" y="88" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">2 sinks · 2 dishwashers · Bar seating</text><text x="325" y="100" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Walk-in pantry · Beverage fridge</text><rect x="16" y="141" width="140" height="68" rx="5" fill="white" stroke="#ddd"/><text x="86" y="173" text-anchor="middle" font-family="Nunito Sans" font-size="10" font-weight="800" fill="#222">Family Room</text><text x="86" y="186" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">French doors · Sunlit</text><rect x="166" y="141" width="140" height="68" rx="5" fill="white" stroke="#ddd"/><text x="236" y="173" text-anchor="middle" font-family="Nunito Sans" font-size="10" font-weight="800" fill="#222">Study</text><text x="236" y="186" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Balcony · Sunset views</text><rect x="316" y="141" width="128" height="68" rx="5" fill="white" stroke="#ddd"/><text x="380" y="173" text-anchor="middle" font-family="Nunito Sans" font-size="10" font-weight="800" fill="#222">Dining &amp; Bar</text><text x="380" y="186" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Open plan</text><rect x="140" y="228" width="180" height="52" rx="5" fill="white" stroke="#ddd"/><text x="230" y="256" text-anchor="middle" font-family="Nunito Sans" font-size="10" font-weight="800" fill="#222">Entry &amp; Foyer</text><text x="230" y="269" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Panoramic lake views on entry</text></svg></div>
+      <div class="fp-rooms">
+        <div class="rm"><h4>&#127968; Step-Down Living Room</h4><p>Vaulted double-height ceilings, gas fireplace. Floor-to-ceiling windows across the entire back wall.</p><div class="rm-tags"><span>Gas Fireplace</span><span>Vaulted Ceiling</span><span>Lake Views</span></div></div>
+        <div class="rm"><h4>&#127859; Chef's Kitchen</h4><p>Thermador double ovens, dual Subzero, two sinks, two dishwashers, walk-in pantry, beverage fridge, bar seating.</p><div class="rm-tags"><span>Dual Subzero</span><span>Thermador</span><span>Walk-in Pantry</span></div></div>
+        <div class="rm"><h4>&#128218; Waterside Study</h4><p>French doors, private balcony overlooking the lake.</p></div>
+        <div class="rm"><h4>&#127770; Family Room</h4><p>Sunlit with French doors. Opens to main living area.</p></div>
       </div>
     </div>
+    <div class="fp" id="fl-upper">
+      <div class="fp-svg"><svg viewBox="0 0 460 260" style="width:100%;max-width:460px"><rect width="460" height="260" rx="8" fill="#f7f7f7"/><rect width="460" height="4" rx="2" fill="#008489" opacity=".25"/><text x="230" y="17" text-anchor="middle" font-family="Nunito Sans" font-size="9" fill="#717171" font-weight="700">UPPER LEVEL — Lake Side ↑</text><rect x="16" y="28" width="200" height="105" rx="5" fill="white" stroke="#008489" stroke-width="2"/><text x="116" y="64" text-anchor="middle" font-family="Nunito Sans" font-size="12" font-weight="800" fill="#222">Primary Suite</text><text x="116" y="78" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Fireplace · Jacuzzi tub</text><text x="116" y="90" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Dual closets &amp; vanities</text><text x="116" y="102" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Walk-in glass shower</text><rect x="226" y="28" width="106" height="68" rx="5" fill="white" stroke="#ddd"/><text x="279" y="56" text-anchor="middle" font-family="Nunito Sans" font-size="9" font-weight="800" fill="#222">Bed 2</text><text x="279" y="70" text-anchor="middle" font-family="Nunito Sans" font-size="7" fill="#717171">Walk-in closet</text><rect x="340" y="28" width="106" height="68" rx="5" fill="white" stroke="#ddd"/><text x="393" y="56" text-anchor="middle" font-family="Nunito Sans" font-size="9" font-weight="800" fill="#222">Bed 3</text><text x="393" y="70" text-anchor="middle" font-family="Nunito Sans" font-size="7" fill="#717171">Walk-in closet</text><rect x="226" y="104" width="106" height="68" rx="5" fill="white" stroke="#ddd"/><text x="279" y="132" text-anchor="middle" font-family="Nunito Sans" font-size="9" font-weight="800" fill="#222">Bed 4</text><text x="279" y="146" text-anchor="middle" font-family="Nunito Sans" font-size="7" fill="#717171">Walk-in closet</text><rect x="340" y="104" width="106" height="68" rx="5" fill="white" stroke="#ddd"/><text x="393" y="132" text-anchor="middle" font-family="Nunito Sans" font-size="9" font-weight="800" fill="#222">Bed 5</text><text x="393" y="146" text-anchor="middle" font-family="Nunito Sans" font-size="7" fill="#717171">Ensuite bath</text><rect x="226" y="182" width="220" height="30" rx="5" fill="white" stroke="#ddd"/><text x="336" y="202" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Full Bath (dual vanities) · 2nd Laundry</text></svg></div>
+      <div class="fp-rooms">
+        <div class="rm"><h4>&#128081; Primary Suite <span class="badge">Master</span></h4><p>Full lake-facing wing. Gas fireplace, jacuzzi tub, dual walk-in closets, dual vanities, walk-in glass shower.</p><div class="rm-tags"><span>Fireplace</span><span>Jacuzzi</span><span>Dual Closets</span><span>Glass Shower</span></div></div>
+        <div class="rm"><h4>&#128716; Bedroom 2</h4><p>Large with walk-in closet. Shared full bath with dual vanities.</p></div>
+        <div class="rm"><h4>&#128716; Bedroom 3</h4><p>Large with walk-in closet. Shared full bath access.</p></div>
+        <div class="rm"><h4>&#128716; Bedroom 4</h4><p>Large with walk-in closet. Catwalk views of living room.</p></div>
+        <div class="rm"><h4>&#128716; Bedroom 5 <span class="badge">Ensuite</span></h4><p>Private ensuite bath and walk-in closet.</p></div>
+      </div>
+    </div>
+    <div class="fp" id="fl-lower">
+      <div class="fp-svg"><svg viewBox="0 0 460 220" style="width:100%;max-width:460px"><rect width="460" height="220" rx="8" fill="#f7f7f7"/><rect width="460" height="4" rx="2" fill="#008489" opacity=".25"/><text x="230" y="17" text-anchor="middle" font-family="Nunito Sans" font-size="9" fill="#717171" font-weight="700">WALKOUT BASEMENT — Lake Side ↑</text><rect x="16" y="28" width="260" height="85" rx="5" fill="white" stroke="#008489" stroke-width="1.5"/><text x="146" y="62" text-anchor="middle" font-family="Nunito Sans" font-size="11" font-weight="800" fill="#222">Great Room / Rec</text><text x="146" y="76" text-anchor="middle" font-family="Nunito Sans" font-size="8" fill="#717171">Fireplace · Floor-to-ceiling lake views</text><rect x="286" y="28" width="158" height="40" rx="5" fill="white" stroke="#ddd"/><text x="365" y="52" text-anchor="middle" font-family="Nunito Sans" font-size="9" font-weight="800" fill="#222">Full Kitchen</text><rect x="286" y="74" width="158" height="40" rx="5" fill="white" stroke="#ddd"/><text x="365" y="98" text-anchor="middle" font-family="Nunito Sans" font-size="9" font-weight="800" fill="#222">Gym / Bed 6</text><rect x="16" y="128" width="428" height="34" rx="5" fill="#008489" opacity=".06" stroke="#008489" stroke-width="1" stroke-dasharray="4"/><text x="230" y="150" text-anchor="middle" font-family="Nunito Sans" font-size="9" font-weight="700" fill="#008489">Patio → Grand Lawn → 114 ft Lakefront</text></svg></div>
+      <div class="fp-rooms">
+        <div class="rm"><h4>&#127916; Great Room / Rec Area</h4><p>Wall-to-wall lake views. Gas fireplace. Walkout to patio.</p><div class="rm-tags"><span>Fireplace</span><span>Lake Views</span><span>Walkout</span></div></div>
+        <div class="rm"><h4>&#127859; Full Second Kitchen</h4><p>Complete kitchen on lower level for multi-family cooking.</p></div>
+        <div class="rm"><h4>&#128170; Gym / Bedroom 6 <span class="badge">Flex</span></h4><p>Flex room. Currently gym, can be 6th bedroom.</p></div>
+        <div class="rm"><h4>&#127796; Patio &amp; Lakefront</h4><p>Walkout to patio, grand lawn, 114 ft private lakefront.</p></div>
+      </div>
+    </div>
+  </section>
 
-    <!-- UPPER LEVEL -->
-    <div class="floor-content" id="floor-upper">
-      <div class="floor-layout">
-        <div class="floor-plan-wrap">
-          <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:460px;">
-            <rect x="0" y="0" width="460" height="300" rx="12" fill="#f0f8fb"/>
-            <text x="230" y="20" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" fill="#5a727d">UPPER LEVEL &mdash; Lake Side &#8593;</text>
-            <!-- Primary Suite -->
-            <rect x="20" y="35" width="200" height="120" rx="6" fill="#d4ecf5" stroke="#1b6b8a" stroke-width="2"/>
-            <text x="120" y="75" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" font-weight="700" fill="#0e4257">Primary Suite</text>
-            <text x="120" y="92" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Gas fireplace &bull; Jacuzzi tub</text>
-            <text x="120" y="106" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Dual walk-in closets &amp; vanities</text>
-            <text x="120" y="120" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Walk-in glass shower</text>
-            <!-- Catwalk -->
-            <rect x="225" y="70" width="15" height="50" rx="3" fill="#f5e6c8"/>
-            <text x="232" y="100" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="7" fill="#5a727d" transform="rotate(-90,232,100)">Catwalk</text>
-            <!-- Bedroom 2 -->
-            <rect x="250" y="35" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="295" y="65" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 2</text>
-            <text x="295" y="80" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Walk-in closet</text>
-            <!-- Bedroom 3 -->
-            <rect x="350" y="35" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="395" y="65" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 3</text>
-            <text x="395" y="80" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Walk-in closet</text>
-            <!-- Bedroom 4 -->
-            <rect x="250" y="120" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="295" y="150" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 4</text>
-            <text x="295" y="165" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Walk-in closet</text>
-            <!-- Bedroom 5 -->
-            <rect x="350" y="120" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="395" y="150" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 5</text>
-            <text x="395" y="165" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Ensuite bath</text>
-            <!-- Bath -->
-            <rect x="250" y="205" width="190" height="40" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
-            <text x="345" y="228" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Full Bath (dual vanities) &bull; 2nd Laundry Room</text>
-            <!-- Staircase -->
-            <rect x="20" y="170" width="100" height="40" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
-            <text x="70" y="194" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Staircase down</text>
-            <rect x="0" y="0" width="460" height="6" rx="3" fill="#3da5c2" opacity="0.4"/>
-          </svg>
-        </div>
-        <div class="floor-rooms">
-          <div class="room-card">
-            <div class="rc-header"><h4>&#128081; Primary Suite</h4><span class="rc-badge">Master</span></div>
-            <p>The entire lake-facing wing. Gas fireplace, jacuzzi tub, dual walk-in closets, dual vanities, and a large shared walk-in glass shower. Incredible natural light.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Gas Fireplace</span><span class="rc-amenity">Jacuzzi Tub</span><span class="rc-amenity">Dual Closets</span><span class="rc-amenity">Glass Shower</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#128716; Bedroom 2</h4></div>
-            <p>Large bedroom with walk-in closet. Shares the full bath with dual vanities across the catwalk.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Shared Full Bath</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#128716; Bedroom 3</h4></div>
-            <p>Large bedroom with walk-in closet. Access to the shared full bath with dual vanities.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Shared Full Bath</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#128716; Bedroom 4</h4></div>
-            <p>Large bedroom with walk-in closet. Connected to the catwalk overlooking the main level living room.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Catwalk Views</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#128716; Bedroom 5</h4><span class="rc-badge">Ensuite</span></div>
-            <p>Large bedroom with its own private ensuite bathroom and walk-in closet. Great for guests who want privacy.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Ensuite Bath</span><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Private</span></div>
-          </div>
-        </div>
-      </div>
-    </div>
+  <hr class="sec-div">
 
-    <!-- WALKOUT BASEMENT -->
-    <div class="floor-content" id="floor-lower">
-      <div class="floor-layout">
-        <div class="floor-plan-wrap">
-          <svg viewBox="0 0 460 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:460px;">
-            <rect x="0" y="0" width="460" height="260" rx="12" fill="#f0f8fb"/>
-            <text x="230" y="20" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" fill="#5a727d">WALKOUT BASEMENT &mdash; Lake Side &#8593;</text>
-            <!-- Main space -->
-            <rect x="20" y="35" width="260" height="100" rx="6" fill="#d4ecf5" stroke="#1b6b8a" stroke-width="1.5"/>
-            <text x="150" y="70" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" font-weight="600" fill="#0e4257">Great Room / Rec Area</text>
-            <text x="150" y="87" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Fireplace &bull; Floor-to-ceiling lake views</text>
-            <text x="150" y="101" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Wall-to-wall windows</text>
-            <!-- Kitchen -->
-            <rect x="290" y="35" width="150" height="55" rx="6" fill="#faf3e6" stroke="#f5e6c8" stroke-width="1.5"/>
-            <text x="365" y="60" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Full Kitchen</text>
-            <text x="365" y="75" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Second full kitchen</text>
-            <!-- Flex / 6th BR -->
-            <rect x="290" y="100" width="150" height="55" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
-            <text x="365" y="122" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Gym / Bedroom 6</text>
-            <text x="365" y="137" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Flex room</text>
-            <!-- Storage -->
-            <rect x="20" y="145" width="130" height="50" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
-            <text x="85" y="174" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Storage</text>
-            <!-- Patio / Lake -->
-            <rect x="20" y="210" width="420" height="35" rx="6" fill="#3da5c2" opacity="0.15" stroke="#3da5c2" stroke-width="1" stroke-dasharray="4"/>
-            <text x="230" y="232" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#1b6b8a">Aggregate Patio &rarr; Grand Lawn &rarr; Lakefront (114 ft)</text>
-            <!-- Staircase markers -->
-            <rect x="160" y="145" width="70" height="50" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
-            <text x="195" y="174" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Stairs up (x2)</text>
-            <rect x="0" y="0" width="460" height="6" rx="3" fill="#3da5c2" opacity="0.4"/>
-          </svg>
-        </div>
-        <div class="floor-rooms">
-          <div class="room-card">
-            <div class="rc-header"><h4>&#127916; Great Room / Rec Area</h4></div>
-            <p>Spacious walkout level with another set of wall-to-wall floor-to-ceiling windows facing the lake. Gas fireplace. Perfect for movie nights, games, or overflow sleeping.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Gas Fireplace</span><span class="rc-amenity">Lake Views</span><span class="rc-amenity">Walkout Access</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#127859; Full Kitchen</h4></div>
-            <p>A complete second kitchen on the lower level. Great when multiple families are staying and everyone wants to cook at different times.</p>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#128170; Gym / Flex Room / Bedroom 6</h4><span class="rc-badge">Flex</span></div>
-            <p>Currently set up as a gym/flex room, but can serve as a 6th bedroom for overflow guests. Lots of versatility down here.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Flexible Use</span><span class="rc-amenity">Gym Setup</span><span class="rc-amenity">6th Sleeping Area</span></div>
-          </div>
-          <div class="room-card">
-            <div class="rc-header"><h4>&#127796; Patio &amp; Lakefront</h4></div>
-            <p>Walk right out to a huge aggregate patio, then the grand lawn slopes down to 114 feet of private lakefront. This is where summer happens.</p>
-            <div class="rc-amenities"><span class="rc-amenity">Large Patio</span><span class="rc-amenity">Grand Lawn</span><span class="rc-amenity">114 ft Frontage</span></div>
-          </div>
-        </div>
-      </div>
+  <!-- ESSENTIALS -->
+  <section id="essentials">
+    <h2 class="sec-h">What this place offers</h2>
+    <div class="amen-grid">
+      <div class="amen"><div class="a-icon">&#128246;</div><div class="a-text"><h4>WiFi</h4><p>Password on the fridge</p></div></div>
+      <div class="amen"><div class="a-icon">&#128758;</div><div class="a-text"><h4>Lake access</h4><p>All-sports lake. Life jackets in dock box.</p></div></div>
+      <div class="amen"><div class="a-icon">&#128293;</div><div class="a-text"><h4>Fire pit</h4><p>Wood in side yard. S'mores in pantry.</p></div></div>
+      <div class="amen"><div class="a-icon">&#128676;</div><div class="a-text"><h4>Pontoon boat</h4><p>Keys by back door. Life jackets for all.</p></div></div>
+      <div class="amen"><div class="a-icon">&#128758;</div><div class="a-text"><h4>Kayaks &amp; paddleboards</h4><p>On rack by dock. Paddles in dock box.</p></div></div>
+      <div class="amen"><div class="a-icon">&#127769;</div><div class="a-text"><h4>Quiet hours after 10pm</h4><p>Lake carries sound. Be mellow.</p></div></div>
+      <div class="amen"><div class="a-icon">&#128167;</div><div class="a-text"><h4>Well water</h4><p>Safe. Brita in fridge. Don't run excessively.</p></div></div>
+      <div class="amen"><div class="a-icon">&#127384;</div><div class="a-text"><h4>Emergency info</h4><p>Henry Ford Hospital — 10 min. Fire ext. under sink.</p></div></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- WELCOME -->
-<section class="welcome" id="welcome">
-  <div class="container">
-    <div class="section-tag">Make yourself at home</div>
-    <h2 class="section-title">The Essentials &#127969;</h2>
-    <p class="section-desc">The quick-reference stuff you'll want to know during your stay.</p>
-    <div class="welcome-grid">
-      <div class="welcome-card">
-        <div class="card-icon">&#128246;</div>
-        <h3>WiFi &amp; Essentials</h3>
-        <p>Network and password are posted on the fridge. Towels are in the hall closet. Extra blankets are in the upstairs linen cabinet. Make yourself at home!</p>
-        <div class="detail">WiFi password on the fridge &#128064;</div>
-      </div>
-      <div class="welcome-card">
-        <div class="card-icon">&#128758;</div>
-        <h3>The Lake</h3>
-        <p>Middle Straits Lake is an all-sports lake &mdash; great for swimming, kayaking, pontoon cruising, and fishing. Life jackets are in the dock box. Swim off the dock anytime!</p>
-        <div class="detail">Sunsets from the dock are unbeatable</div>
-      </div>
-      <div class="welcome-card">
-        <div class="card-icon">&#127769;</div>
-        <h3>Quiet Hours</h3>
-        <p>We love a good bonfire, but let's keep it mellow after 10pm out of respect for the neighbors. The lake carries sound &mdash; whisper voices, not shouts!</p>
-        <div class="detail">S'mores stuff is in the pantry &#128293;</div>
-      </div>
-      <div class="welcome-card">
-        <div class="card-icon">&#128465;&#65039;</div>
-        <h3>Before You Go</h3>
-        <p>Strip your beds and start a load of laundry if you can. Take your trash out. Run the dishwasher. Leave it a little better than you found it &mdash; the Dickson way!</p>
-        <div class="detail">Next family will thank you &#128591;</div>
-      </div>
-      <div class="welcome-card">
-        <div class="card-icon">&#127384;</div>
-        <h3>Emergencies</h3>
-        <p>Fire extinguisher is under the kitchen sink. First aid kit is in the downstairs bathroom cabinet. Nearest hospital: Henry Ford West Bloomfield &mdash; 10 min away.</p>
-        <div class="detail">Stay safe, have fun!</div>
-      </div>
-    </div>
-  </div>
-</section>
+  <hr class="sec-div">
 
-<!-- HOUSE MANUAL -->
-<section class="manual" id="manual">
-  <div class="container">
-    <div class="section-tag">Know your way around</div>
-    <h2 class="section-title">House Guide &#128203;</h2>
-    <p class="section-desc">Everything you need to know to keep the house humming. If Stan's not around to show you &mdash; this is your Stan.</p>
-    <div class="manual-categories">
-      <button class="manual-tab active" data-tab="kitchen">Kitchen</button>
-      <button class="manual-tab" data-tab="water">Boat &amp; Water</button>
-      <button class="manual-tab" data-tab="outdoor">Outdoor</button>
-      <button class="manual-tab" data-tab="systems">Systems</button>
-      <button class="manual-tab" data-tab="seasonal">Seasonal</button>
+  <!-- HOUSE GUIDE -->
+  <section id="guide-sec">
+    <h2 class="sec-h">House guide</h2>
+    <p style="color:var(--mid);font-size:.88rem;margin-bottom:14px">If Stan's not around — this is your Stan.</p>
+    <div class="guide-tabs">
+      <button class="gt active" data-gt="kitchen">Kitchen</button>
+      <button class="gt" data-gt="water">Boat &amp; Water</button>
+      <button class="gt" data-gt="outdoor">Outdoor</button>
+      <button class="gt" data-gt="systems">Systems</button>
+      <button class="gt" data-gt="seasonal">Seasonal</button>
     </div>
-    <div class="manual-content active" id="tab-kitchen">
-      <ul class="manual-list">
-        <li><span class="li-icon">&#9749;</span><div class="li-content"><h4>Coffee Maker</h4><p>Keurig is on the counter &mdash; pods are in the drawer below. For the big crew, the drip coffee maker is in the lower cabinet. Filters in the pantry.</p></div></li>
-        <li><span class="li-icon">&#128293;</span><div class="li-content"><h4>Grill</h4><p>Propane grill is on the deck. Extra tank is in the garage. Turn off the tank valve when done &mdash; and give the grates a brush while it's still hot.</p></div></li>
-        <li><span class="li-icon">&#128465;&#65039;</span><div class="li-content"><h4>Trash &amp; Recycling</h4><p>Trash goes out to the bins on the side of the garage. Pickup is Tuesday morning. Recycling is the blue bin. No plastic bags in recycling!</p></div></li>
-        <li><span class="li-icon">&#127869;&#65039;</span><div class="li-content"><h4>Dishwasher</h4><p>Please run it when it's full and unload when done. Pods are under the sink. The bottom rack sticks a little &mdash; just give it a firm pull.</p></div></li>
-      </ul>
+    <div class="gp active" id="gt-kitchen">
+      <div class="gi"><span class="gi-icon">&#9749;</span><div><h4>Coffee</h4><p>Keurig on counter, pods in drawer. Drip maker in lower cabinet for big crew.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#128293;</span><div><h4>Grill</h4><p>Propane on deck. Extra tank in garage. Turn off valve, brush grates while hot.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#128465;&#65039;</span><div><h4>Trash</h4><p>Bins on garage side. Tuesday pickup. Blue bin = recycling. No plastic bags.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#127869;&#65039;</span><div><h4>Dishwasher</h4><p>Run when full, unload when done. Pods under sink. Bottom rack sticks.</p></div></div>
     </div>
-    <div class="manual-content" id="tab-water">
-      <ul class="manual-list">
-        <li><span class="li-icon">&#128676;</span><div class="li-content"><h4>Pontoon Boat</h4><p>Keys are on the hook by the back door. Check the fuel gauge before heading out. No-wake within 100 feet of shore. Life jackets must be on board for everyone.</p></div></li>
-        <li><span class="li-icon">&#128758;</span><div class="li-content"><h4>Kayaks &amp; Paddleboards</h4><p>Stored on the rack by the dock. Please rinse after use and put them back on the rack &mdash; not on the ground. Paddles are in the dock box.</p></div></li>
-        <li><span class="li-icon">&#127946;</span><div class="li-content"><h4>Swimming</h4><p>Swim off the dock anytime. The swim ladder is on the left side. Kids under 12 need a buddy or an adult watching. The lake drops off about 15 feet from the dock.</p></div></li>
-        <li><span class="li-icon">&#127907;</span><div class="li-content"><h4>Fishing</h4><p>Bass, bluegill, and pike are all in the lake. Rods are in the garage. Michigan fishing license required for ages 17+. Catch and release encouraged!</p></div></li>
-      </ul>
+    <div class="gp" id="gt-water">
+      <div class="gi"><span class="gi-icon">&#128676;</span><div><h4>Pontoon</h4><p>Keys by back door. Check fuel. No-wake 100 ft from shore. PFDs for all.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#128758;</span><div><h4>Kayaks &amp; paddleboards</h4><p>On rack by dock. Rinse after. Paddles in dock box.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#127946;</span><div><h4>Swimming</h4><p>Ladder on left side. Kids under 12 need buddy. Drops off ~15 ft out.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#127907;</span><div><h4>Fishing</h4><p>Bass, bluegill, pike. Rods in garage. MI license 17+. Catch &amp; release encouraged.</p></div></div>
     </div>
-    <div class="manual-content" id="tab-outdoor">
-      <ul class="manual-list">
-        <li><span class="li-icon">&#128293;</span><div class="li-content"><h4>Fire Pit</h4><p>Firewood is stacked in the side yard. Kindling and lighter are in the garage. Fully extinguish fires before going to bed &mdash; hose it down, don't just let it burn out.</p></div></li>
-        <li><span class="li-icon">&#127807;</span><div class="li-content"><h4>Lawn &amp; Garden</h4><p>Enjoy the yard! The sprinklers are on a timer &mdash; they run early morning. If you see a garden hose running, please shut it off when done.</p></div></li>
-        <li><span class="li-icon">&#129439;</span><div class="li-content"><h4>Bugs</h4><p>Bug spray is on the shelf in the garage. Citronella candles are in the deck storage box. Michigan mosquitoes are real &mdash; spray up at dusk!</p></div></li>
-      </ul>
+    <div class="gp" id="gt-outdoor">
+      <div class="gi"><span class="gi-icon">&#128293;</span><div><h4>Fire pit</h4><p>Wood in side yard. Kindling in garage. Hose it down before bed.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#127807;</span><div><h4>Lawn</h4><p>Sprinklers on timer (early AM). Shut off hoses when done.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#129439;</span><div><h4>Bugs</h4><p>Spray in garage. Citronella in deck storage. Spray up at dusk.</p></div></div>
     </div>
-    <div class="manual-content" id="tab-systems">
-      <ul class="manual-list">
-        <li><span class="li-icon">&#127777;&#65039;</span><div class="li-content"><h4>Thermostat</h4><p>The Nest thermostat is in the hallway. Please don't set below 68 in summer or above 72 in winter. If you're the last to leave, set it to Away mode.</p></div></li>
-        <li><span class="li-icon">&#128167;</span><div class="li-content"><h4>Water</h4><p>We're on well water &mdash; it's safe but tastes different than city water. Brita pitcher is in the fridge. Please don't run water excessively.</p></div></li>
-        <li><span class="li-icon">&#128703;</span><div class="li-content"><h4>Hot Water</h4><p>The water heater handles about 3 showers back-to-back before needing to recover. Stagger your showers during big family weekends!</p></div></li>
-        <li><span class="li-icon">&#9889;</span><div class="li-content"><h4>Electrical Panel</h4><p>Breaker box is in the basement utility room. If something trips, check there before calling Dad. The dock outlet is on its own breaker (#14).</p></div></li>
-      </ul>
+    <div class="gp" id="gt-systems">
+      <div class="gi"><span class="gi-icon">&#127777;&#65039;</span><div><h4>Thermostat</h4><p>Nest in hallway. Max 68 summer / 72 winter. Away mode when last to leave.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#128703;</span><div><h4>Hot water</h4><p>~3 showers back-to-back before recovery. Stagger on big weekends.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#9889;</span><div><h4>Electrical</h4><p>Breaker box in basement utility. Dock outlet = breaker #14.</p></div></div>
     </div>
-    <div class="manual-content" id="tab-seasonal">
-      <ul class="manual-list">
-        <li><span class="li-icon">&#127810;</span><div class="li-content"><h4>Fall Closing</h4><p>Usually early October. Boat comes out, dock comes in, water lines get blown out. This is a family effort &mdash; all hands on deck (literally).</p></div></li>
-        <li><span class="li-icon">&#10052;&#65039;</span><div class="li-content"><h4>Winter</h4><p>The house can be used in winter! Heat stays at 58&deg;F minimum. Please check that no faucets are dripping and no windows are left open.</p></div></li>
-        <li><span class="li-icon">&#127800;</span><div class="li-content"><h4>Spring Opening</h4><p>Usually early May. Dock goes in, boat gets launched, water gets turned on and tested. Another all-family event &mdash; and usually the first grill of the year!</p></div></li>
-        <li><span class="li-icon">&#9728;&#65039;</span><div class="li-content"><h4>Peak Summer</h4><p>July 4th week is prime time. Coordinate with the family on the calendar so everyone gets lake time. Weekdays are actually the best &mdash; the lake is glass.</p></div></li>
-      </ul>
+    <div class="gp" id="gt-seasonal">
+      <div class="gi"><span class="gi-icon">&#127810;</span><div><h4>Fall closing</h4><p>Early Oct. Boat out, dock in, water lines blown. All-family effort.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#10052;&#65039;</span><div><h4>Winter</h4><p>Usable in winter. Heat at 58&deg;F min. Check faucets and windows.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#127800;</span><div><h4>Spring opening</h4><p>Early May. Dock in, boat launched. First grill of the year.</p></div></div>
+      <div class="gi"><span class="gi-icon">&#9728;&#65039;</span><div><h4>Peak summer</h4><p>July 4th is prime. Coordinate on calendar. Weekdays = glass lake.</p></div></div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- LOCAL GUIDE -->
-<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.css">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.9.4/leaflet.min.js"></script>
-<section class="guide" id="guide">
-  <div class="container">
-    <div class="section-tag">Around the lake</div>
-    <h2 class="section-title">Local Favorites &#128205;</h2>
-    <p class="section-desc">Real spots near the lake with Google ratings and distances from the house. Click any spot to see it on the map.</p>
-    <div class="guide-map" id="guideMap"></div>
-    <div class="guide-filters" id="guideFilters"></div>
-    <div class="guide-sort">
-      <span>Sort by:</span>
-      <select id="guideSort" onchange="renderGuideList()">
-        <option value="distance">Distance (closest)</option>
-        <option value="rating">Rating (highest)</option>
-        <option value="reviews">Most reviewed</option>
-        <option value="name">Name (A-Z)</option>
-      </select>
+  <hr class="sec-div">
+
+  <!-- LOCAL SPOTS -->
+  <section id="local">
+    <h2 class="sec-h">Nearby spots</h2>
+    <div class="spots-map" id="guideMap"></div>
+    <div class="spots-controls">
+      <div class="spots-filters" id="sFilters"></div>
+      <div class="spots-sort"><select id="sSort" onchange="renderSpots()"><option value="distance">Nearest</option><option value="rating">Top rated</option><option value="reviews">Most reviewed</option><option value="name">A–Z</option></select></div>
     </div>
-    <div class="guide-list" id="guideList"></div>
-  </div>
-</section>
+    <div id="spotsList"></div>
+  </section>
 
-<!-- LAKE ASSOCIATION / HOA -->
-<section class="hoa" id="hoa">
-  <div class="container">
-    <div class="section-tag">Know the rules</div>
-    <h2 class="section-title">Lake Association (MSLIA) &#9875;</h2>
-    <p class="section-desc">Middle Straits Lake is managed by the <strong>Middle Straits Lake Improvement Association</strong>, founded in 1973. Here are the rules that matter most for your visit.</p>
+  <hr class="sec-div">
 
-    <div class="hoa-alert">
-      <div class="alert-icon">&#9888;&#65039;</div>
-      <div class="alert-content">
-        <h4>No-Wake Hours &mdash; This Is the Big One</h4>
-        <p>Power boating at wake speed and waterskiing are <strong>prohibited on Sundays, Memorial Day, Independence Day, and Labor Day</strong> before 11:00 AM or after 7:30 PM (Eastern Daylight Time). Violators face a $100 fine plus court costs or up to 90 days imprisonment per West Bloomfield Ordinance #88.</p>
-      </div>
+  <!-- HOA -->
+  <section id="hoa">
+    <h2 class="sec-h">Lake rules (MSLIA)</h2>
+    <div class="hoa-warn"><div class="hw-icon">&#9888;&#65039;</div><div><h4>No-wake hours</h4><p>Wake-speed boating &amp; waterskiing prohibited <strong>Sundays, Memorial Day, July 4th, Labor Day</strong> before 11 AM / after 7:30 PM. $100 fine.</p></div></div>
+    <div class="hoa-grid">
+      <div class="hoa-r"><h4>&#128676; No wake near shore</h4><p>Slow no-wake within 100 ft of shore, dock, raft, swimmer.</p></div>
+      <div class="hoa-r"><h4>&#127946; Towing rules</h4><p>Spotter + driver. 170&deg; mirror. No towing after sunset.</p></div>
+      <div class="hoa-r"><h4>&#128260; Counter-clockwise</h4><p>All vessels operate CCW when possible.</p></div>
+      <div class="hoa-r"><h4>&#129509; Life jackets</h4><p>1 PFD per passenger. Kids &lt;6 must wear one.</p></div>
+      <div class="hoa-r"><h4>&#128308; Jet skis</h4><p>No PWC sunset–8 AM. 100 ft from docks. No one under 14.</p></div>
+      <div class="hoa-r"><h4>&#127867; No boating intoxicated</h4><p>Same as driving. Implied consent. Severe fines.</p></div>
+      <div class="hoa-r"><h4>&#128562; Wake liability</h4><p>Owner liable for all wake damage.</p></div>
+      <div class="hoa-r"><h4>&#128694; Kids &amp; boats</h4><p>&lt;12: supervised, max 35 HP. 12–15: adult or safety cert.</p></div>
     </div>
-
-    <div class="hoa-rules">
-      <div class="hoa-rule">
-        <div class="rule-icon">&#128676;</div>
-        <h4>Slow &mdash; No Wake Near Shore</h4>
-        <p>Michigan law requires slow, no-wake speed within 100 feet of any shoreline, dock, raft, swimmer, or other watercraft. This applies to all boats at all times.</p>
-      </div>
-      <div class="hoa-rule">
-        <div class="rule-icon">&#127946;</div>
-        <h4>Waterskiing &amp; Towing</h4>
-        <p>A spotter (in addition to the driver) is required in any boat towing a person. A 170&deg; wide-angle rearview mirror is also required. No towing between one hour after sunset and one hour before sunrise.</p>
-      </div>
-      <div class="hoa-rule">
-        <div class="rule-icon">&#128260;</div>
-        <h4>Counter-Clockwise Traffic</h4>
-        <p>All vessels should operate in a counter-clockwise pattern around the lake when reasonably possible. This keeps traffic flowing safely and predictably.</p>
-      </div>
-      <div class="hoa-rule">
-        <div class="rule-icon">&#129509;</div>
-        <h4>Life Jackets Required</h4>
-        <p>All vessels must carry one USCG-approved PFD per passenger. Children under 6 in open deck areas must wear a life jacket at all times &mdash; it's Michigan law.</p>
-      </div>
-      <div class="hoa-rule">
-        <div class="rule-icon">&#128308;</div>
-        <h4>Personal Watercraft (Jet Skis)</h4>
-        <p>No PWC operation from one hour before sunset to 8:00 AM. Stay 100 ft from docks and 150 ft behind other boats. No one under 14 may operate a PWC under any circumstances.</p>
-      </div>
-      <div class="hoa-rule">
-        <div class="rule-icon">&#127867;</div>
-        <h4>No Boating Under the Influence</h4>
-        <p>Same as driving a car &mdash; operating a vessel while intoxicated is illegal under Michigan law. Implied consent applies. Severe fines and jail time.</p>
-      </div>
-      <div class="hoa-rule">
-        <div class="rule-icon">&#128562;</div>
-        <h4>Wake Damage Liability</h4>
-        <p>The boat owner is personally responsible for any damage to life or property caused by their vessel's wake. Keep speeds safe, especially near docks and moored boats.</p>
-      </div>
-      <div class="hoa-rule">
-        <div class="rule-icon">&#128694;</div>
-        <h4>Kids Operating Boats</h4>
-        <p>Under 12: must be supervised by someone 16+ and max 35 HP. Ages 12&ndash;15: need an adult present or a boating safety certificate. Anyone can operate up to 6 HP.</p>
-      </div>
-    </div>
-
     <div class="hoa-links">
-      <a href="https://mslia.org/" target="_blank" class="hoa-link primary"><span class="link-icon">&#127760;</span> MSLIA Website</a>
-      <a href="https://www.facebook.com/MSLIA/" target="_blank" class="hoa-link secondary"><span class="link-icon">&#128172;</span> Facebook Page</a>
-      <a href="https://mslia.org/calendar-news/" target="_blank" class="hoa-link secondary"><span class="link-icon">&#128197;</span> Events Calendar</a>
-      <a href="https://mslia.org/boating-laws/" target="_blank" class="hoa-link secondary"><span class="link-icon">&#9878;&#65039;</span> Full Boating Laws</a>
-      <a href="https://mslia.org/meeting-minutes/" target="_blank" class="hoa-link secondary"><span class="link-icon">&#128196;</span> Meeting Minutes</a>
-      <a href="mailto:lakeboard@mslia.org" class="hoa-link secondary"><span class="link-icon">&#9993;&#65039;</span> Contact MSLIA</a>
+      <a href="https://mslia.org/" target="_blank" class="hl primary">MSLIA Website</a>
+      <a href="https://www.facebook.com/MSLIA/" target="_blank" class="hl secondary">Facebook</a>
+      <a href="https://mslia.org/calendar-news/" target="_blank" class="hl secondary">Events</a>
+      <a href="https://mslia.org/boating-laws/" target="_blank" class="hl secondary">Full Laws</a>
+      <a href="mailto:lakeboard@mslia.org" class="hl secondary">Contact</a>
+    </div>
+  </section>
+
+  <hr class="sec-div">
+
+  <!-- GUESTBOOK -->
+  <section id="guestbook">
+    <h2 class="sec-h">Guestbook</h2>
+    <div class="gb-grid" id="gbGrid">
+      <div class="gb"><p>Best 4th of July ever. The kids are already asking when we can come back. That sunset pontoon ride was magic.</p><div class="gb-a">&mdash; The Dickson Crew, July 2024</div></div>
+      <div class="gb"><p>Thank you Stan &amp; Heather for the most relaxing weekend. We caught 6 bluegill off the dock!</p><div class="gb-a">&mdash; Mike &amp; Sarah, August 2024</div></div>
+      <div class="gb"><p>Three generations, one dock, zero cell service complaints. This place pulls everyone together.</p><div class="gb-a">&mdash; Grandma Heather &#10084;&#65039;</div></div>
+    </div>
+    <div class="gb-form"><h4>Leave a note</h4><input type="text" placeholder="Your name" id="gbN"><textarea placeholder="Share a memory or say hi..." id="gbM"></textarea><button onclick="submitGb()">Post</button></div>
+  </section>
+
+  <hr class="sec-div">
+
+  <!-- FAMILY -->
+  <section id="family">
+    <h2 class="sec-h">The Dickson family</h2>
+    <div class="fam-row">
+      <div class="fam-stat"><div class="fn" data-t="2">0</div><div class="fl">Founders</div></div>
+      <div class="fam-stat"><div class="fn" data-t="12">0</div><div class="fl">Kids &amp; spouses</div></div>
+      <div class="fam-stat"><div class="fn" data-t="16">0</div><div class="fl">Grandkids</div></div>
+    </div>
+    <p class="fam-note">Started by Stan &amp; Heather. Some families do holidays — the Dicksons do lake days. This is where grandkids learn to swim, stories get told around the fire, and every sunset feels made just for us.</p>
+  </section>
+</div>
+
+<!-- SIDEBAR -->
+<div class="sidebar">
+  <div class="side-card">
+    <h3>The Dickson Lake House</h3>
+    <div class="sc-sub">Middle Straits Lake &middot; West Bloomfield, MI</div>
+    <div class="sc-stats">
+      <div class="sc-stat"><div class="ss-val">5</div><div class="ss-label">Beds</div></div>
+      <div class="sc-stat"><div class="ss-val">5.5</div><div class="ss-label">Baths</div></div>
+      <div class="sc-stat"><div class="ss-val">8K+</div><div class="ss-label">Sq Ft</div></div>
+      <div class="sc-stat"><div class="ss-val">114'</div><div class="ss-label">Lakefront</div></div>
+    </div>
+    <div class="sc-addr"><strong>3726 Elder Road South</strong>West Bloomfield, MI 48324</div>
+    <a href="https://maps.google.com/?q=3726+Elder+Road+South+West+Bloomfield+MI" target="_blank" class="sc-btn">Get directions</a>
+    <div class="sc-links">
+      <a href="#essentials" class="sc-link"><span class="sl-icon">&#128246;</span> WiFi &amp; essentials</a>
+      <a href="#guide-sec" class="sc-link"><span class="sl-icon">&#128203;</span> House guide</a>
+      <a href="#local" class="sc-link"><span class="sl-icon">&#128205;</span> Nearby restaurants &amp; spots</a>
+      <a href="#hoa" class="sc-link"><span class="sl-icon">&#9875;</span> Lake rules (MSLIA)</a>
+      <a href="#guestbook" class="sc-link"><span class="sl-icon">&#128221;</span> Sign the guestbook</a>
     </div>
   </div>
-</section>
+  <div style="margin-top:20px" id="wxWidget"><div style="background:var(--bg-gray);border-radius:12px;padding:24px;text-align:center;color:var(--mid);font-size:.88rem">Loading weather...</div></div>
+</div>
 
-<!-- PHOTO WALL -->
-<section class="photos" id="photos">
-  <div class="container">
-    <div class="section-tag">Summers to remember</div>
-    <h2 class="section-title">Memory Wall &#128248;</h2>
-    <p class="section-desc">Every visit makes a memory. Here are some of our favorites from life on the lake.</p>
-    <div class="photo-masonry">
-      <div class="photo-item">
-        <svg class="photo-placeholder" viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="300" rx="14" fill="url(#g1)"/><defs><linearGradient id="g1" x1="0" y1="0" x2="1" y2="1"><stop offset="0%" stop-color="#3da5c2"/><stop offset="100%" stop-color="#1b6b8a"/></linearGradient></defs><text x="200" y="140" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Sunset on the dock</text><text x="200" y="170" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
-        <div class="photo-overlay"><div class="caption">Sunset on the dock</div><div class="date">Summer 2024</div></div>
-      </div>
-      <div class="photo-item">
-        <svg class="photo-placeholder" viewBox="0 0 400 500" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="500" rx="14" fill="url(#g2)"/><defs><linearGradient id="g2" x1="0" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#4a9e6f"/><stop offset="100%" stop-color="#2d6b4a"/></linearGradient></defs><text x="200" y="240" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Grandkids on the lawn</text><text x="200" y="270" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
-        <div class="photo-overlay"><div class="caption">Grandkids on the lawn</div><div class="date">July 4th 2024</div></div>
-      </div>
-      <div class="photo-item">
-        <svg class="photo-placeholder" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="350" rx="14" fill="url(#g3)"/><defs><linearGradient id="g3" x1="0" y1="0" x2="1" y2="0.5"><stop offset="0%" stop-color="#f2845e"/><stop offset="100%" stop-color="#e85d3a"/></linearGradient></defs><text x="200" y="165" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">S'mores night</text><text x="200" y="195" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
-        <div class="photo-overlay"><div class="caption">S'mores night</div><div class="date">Labor Day 2024</div></div>
-      </div>
-      <div class="photo-item">
-        <svg class="photo-placeholder" viewBox="0 0 400 280" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="280" rx="14" fill="url(#g4)"/><defs><linearGradient id="g4" x1="0" y1="1" x2="1" y2="0"><stop offset="0%" stop-color="#f6a96c"/><stop offset="100%" stop-color="#f5e6c8"/></linearGradient></defs><text x="200" y="130" text-anchor="middle" fill="rgba(107,82,64,0.5)" font-family="sans-serif" font-size="20">Morning on the water</text><text x="200" y="160" text-anchor="middle" fill="rgba(107,82,64,0.35)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
-        <div class="photo-overlay"><div class="caption">Morning on the water</div><div class="date">Summer 2023</div></div>
-      </div>
-      <div class="photo-item">
-        <svg class="photo-placeholder" viewBox="0 0 400 420" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="420" rx="14" fill="url(#g5)"/><defs><linearGradient id="g5" x1="0.5" y1="0" x2="0.5" y2="1"><stop offset="0%" stop-color="#5eb8d4"/><stop offset="100%" stop-color="#0e4257"/></linearGradient></defs><text x="200" y="200" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Boat day!</text><text x="200" y="230" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
-        <div class="photo-overlay"><div class="caption">Boat day!</div><div class="date">Summer 2023</div></div>
-      </div>
-      <div class="photo-item">
-        <svg class="photo-placeholder" viewBox="0 0 400 320" xmlns="http://www.w3.org/2000/svg"><rect width="400" height="320" rx="14" fill="url(#g6)"/><defs><linearGradient id="g6" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6b5240"/><stop offset="100%" stop-color="#3e2d1e"/></linearGradient></defs><text x="200" y="150" text-anchor="middle" fill="rgba(255,255,255,0.5)" font-family="sans-serif" font-size="20">Fall closing day</text><text x="200" y="180" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-family="sans-serif" font-size="16">Add your photo!</text></svg>
-        <div class="photo-overlay"><div class="caption">Fall closing day</div><div class="date">October 2024</div></div>
-      </div>
-    </div>
-    <div class="photo-cta">
-      <p>Got lake pics? We want 'em! &#128242;</p>
-    </div>
-  </div>
-</section>
+</div><!-- end layout -->
 
-<!-- GUESTBOOK -->
-<section class="guestbook" id="guestbook">
-  <div class="container">
-    <div class="section-tag">Leave your mark</div>
-    <h2 class="section-title">Guestbook &#128221;</h2>
-    <p class="section-desc">Sign in, leave a note, share a favorite moment. This is the digital version of the book on the coffee table.</p>
-    <div class="guestbook-entries">
-      <div class="gb-entry" style="--tilt: -1.5deg;">
-        <p>Best 4th of July ever. The kids are already asking when we can come back. That sunset pontoon ride was magic.</p>
-        <div class="gb-author">&mdash; The Dickson Crew, July 2024</div>
-      </div>
-      <div class="gb-entry" style="--tilt: 1deg;">
-        <p>Thank you Stan &amp; Heather for the most relaxing weekend. We caught 6 bluegill off the dock and the kids didn't want to leave!</p>
-        <div class="gb-author">&mdash; Mike &amp; Sarah, August 2024</div>
-      </div>
-      <div class="gb-entry" style="--tilt: -0.5deg;">
-        <p>Three generations, one dock, zero cell service complaints. This place has a way of pulling everyone together.</p>
-        <div class="gb-author">&mdash; Grandma Heather &#10084;&#65039;</div>
-      </div>
-    </div>
-    <div class="gb-form" id="guestbookForm">
-      <h3>Leave a Note &#9997;&#65039;</h3>
-      <input type="text" placeholder="Your name" id="gbName">
-      <textarea placeholder="Share a memory, a thank you, or just say hi..." id="gbMessage"></textarea>
-      <button onclick="submitGuestbook()">Sign the Guestbook</button>
-    </div>
-  </div>
-</section>
+<!-- FULL WIDTH: MAP -->
+<div class="full-sec" style="padding-top:32px;padding-bottom:32px">
+  <h2 class="sec-h">Where you'll be</h2>
+  <div class="map-frame"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2940.5!2d-83.3940!3d42.5756!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDM0JzMyLjIiTiA4M8KwMjMnMzguNCJX!5e0!3m2!1sen!2sus!4v1" allowfullscreen loading="lazy"></iframe></div>
+</div>
 
-<!-- FAMILY -->
-<section class="family" id="family">
-  <div class="container">
-    <div class="section-tag">Our family</div>
-    <h2 class="section-title">The Dickson Family &#128153;</h2>
-    <p class="family-tagline">Started by Stan &amp; Heather. Continued by everyone who walks through the door.</p>
-    <div class="family-stats">
-      <div class="stat"><div class="stat-num" data-target="2">0</div><div class="stat-label">Founders</div></div>
-      <div class="stat"><div class="stat-num" data-target="12">0</div><div class="stat-label">Kids (&amp; spouses)</div></div>
-      <div class="stat"><div class="stat-num" data-target="16">0</div><div class="stat-label">Grandkids (&amp; counting!)</div></div>
-      <div class="stat"><div class="stat-num" data-target="1">0</div><div class="stat-label">Lake House</div></div>
-    </div>
-    <div class="family-emoji-row">
-      <span>&#128116;</span><span>&#128117;</span><span>&#128153;</span>
-      <span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128104;</span><span>&#128105;</span><span>&#128153;</span>
-      <span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span><span>&#128118;</span>
-    </div>
-    <p class="family-note">Some families do holidays. The Dicksons do lake days.<br>This house is the place where the whole family comes together &mdash; where grandkids learn to swim, where stories get told around the fire, and where every sunset feels like it was made just for us.</p>
-  </div>
-</section>
-
-<!-- WEATHER -->
-<section class="weather" id="weather">
-  <div class="container">
-    <div class="section-tag">Before you head out</div>
-    <h2 class="section-title">Lake Weather &#127780;&#65039;</h2>
-    <p class="section-desc">Live conditions at Middle Straits Lake so you can plan your day on the water.</p>
-    <div class="weather-widget" id="weatherWidget">
-      <div class="weather-loading" id="weatherLoading">Checking the skies over the lake...</div>
-    </div>
-  </div>
-</section>
-
-<!-- MAP -->
-<section class="map-section" id="map">
-  <div class="container">
-    <div class="section-tag">Find us</div>
-    <h2 class="section-title">On the Map &#128506;&#65039;</h2>
-    <div class="map-embed">
-      <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2940.5!2d-83.3940!3d42.5756!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x0%3A0x0!2zNDLCsDM0JzMyLjIiTiA4M8KwMjMnMzguNCJX!5e0!3m2!1sen!2sus!4v1" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
-    </div>
-  </div>
-</section>
-
-<!-- FOOTER -->
 <footer>
-  <div class="footer-wave">&#127754;</div>
-  <div class="footer-house">The Dickson Lake House</div>
-  <div class="footer-addr">3726 Elder Road South &middot; West Bloomfield, MI &middot; Middle Straits Lake</div>
-  <div class="footer-copy">Made with love for the Dickson family</div>
+  <div class="f-name">The Dickson Lake House</div>
+  <div class="f-addr">3726 Elder Road South &middot; West Bloomfield, MI &middot; Middle Straits Lake</div>
+  <div class="f-copy">Made with love for the Dickson family</div>
 </footer>
 
-</div><!-- end site-content -->
+</div><!-- end site -->
 
 <script>
-// ===== PASSWORD GATE =====
-// Change this password to whatever you want the family to use
-var SITE_PASSWORD = 'lakehouse';
+// PW
+var PW='lakehouse';
+function checkPw(){var v=document.getElementById('pwIn').value;if(v===PW){sessionStorage.setItem('dkl','1');unlock()}else{document.getElementById('pwErr').textContent='Try again';document.getElementById('pwIn').value='';document.getElementById('pwIn').focus()}}
+function unlock(){document.getElementById('site').classList.add('show');document.getElementById('pw').classList.add('gone')}
+if(sessionStorage.getItem('dkl')==='1')unlock();
+document.getElementById('pwIn').addEventListener('keydown',function(e){if(e.key==='Enter')checkPw()});
 
-function checkPassword() {
-  var input = document.getElementById('pwInput').value;
-  if (input === SITE_PASSWORD) {
-    sessionStorage.setItem('dkl-auth', 'true');
-    unlockSite();
-  } else {
-    document.getElementById('pwError').textContent = 'Nope \u2014 try again!';
-    document.getElementById('pwInput').value = '';
-    document.getElementById('pwInput').focus();
-  }
-}
+// FLOOR TABS
+document.querySelectorAll('.ft').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.ft').forEach(function(x){x.classList.remove('active')});document.querySelectorAll('.fp').forEach(function(x){x.classList.remove('active')});t.classList.add('active');document.getElementById('fl-'+t.dataset.fl).classList.add('active')})});
 
-function unlockSite() {
-  document.getElementById('siteContent').classList.add('visible');
-  document.getElementById('pwGate').classList.add('hidden');
-  document.body.style.overflow = '';
-}
+// GUIDE TABS
+document.querySelectorAll('.gt').forEach(function(t){t.addEventListener('click',function(){document.querySelectorAll('.gt').forEach(function(x){x.classList.remove('active')});document.querySelectorAll('.gp').forEach(function(x){x.classList.remove('active')});t.classList.add('active');document.getElementById('gt-'+t.dataset.gt).classList.add('active')})});
 
-// Check if already authenticated this session
-if (sessionStorage.getItem('dkl-auth') === 'true') {
-  unlockSite();
-} else {
-  document.body.style.overflow = 'hidden';
-}
+// WEATHER
+var WMO={0:{i:'&#9728;&#65039;',d:'Clear'},1:{i:'&#127780;&#65039;',d:'Mostly clear'},2:{i:'&#9925;',d:'Partly cloudy'},3:{i:'&#9729;&#65039;',d:'Overcast'},45:{i:'&#127787;&#65039;',d:'Fog'},51:{i:'&#127782;&#65039;',d:'Drizzle'},61:{i:'&#127783;&#65039;',d:'Rain'},63:{i:'&#127783;&#65039;',d:'Rain'},65:{i:'&#127783;&#65039;',d:'Heavy rain'},71:{i:'&#127784;&#65039;',d:'Snow'},73:{i:'&#127784;&#65039;',d:'Snow'},80:{i:'&#127783;&#65039;',d:'Showers'},95:{i:'&#9889;',d:'Storms'}};
+function wmo(c){return WMO[c]||{i:'&#127780;&#65039;',d:'Fair'}}
+(async function(){try{var r=await fetch('https://api.open-meteo.com/v1/forecast?latitude=42.5756&longitude=-83.3916&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code&daily=weather_code,temperature_2m_max,temperature_2m_min&temperature_unit=fahrenheit&wind_speed_unit=mph&timezone=America%2FDetroit&forecast_days=7');var d=await r.json();var c=d.current,dy=d.daily,n=wmo(c.weather_code),days=['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];var fc='';for(var i=1;i<7;i++){var dt=new Date(dy.time[i]+'T12:00:00');var dn=i===1?'Tmrw':days[dt.getDay()];var w=wmo(dy.weather_code[i]);fc+='<div class="wx-day"><div class="wd-name">'+dn+'</div><div class="wd-icon">'+w.i+'</div><div class="wd-hi">'+Math.round(dy.temperature_2m_max[i])+'&deg;</div><div class="wd-lo">'+Math.round(dy.temperature_2m_min[i])+'&deg;</div></div>'}
+document.getElementById('wxWidget').innerHTML='<div class="wx"><div class="wx-now"><div class="wx-icon">'+n.i+'</div><div class="wx-temp">'+Math.round(c.temperature_2m)+'&deg;</div><div class="wx-desc">'+n.d+'</div><div class="wx-det"><span>&#128168; '+Math.round(c.wind_speed_10m)+'mph</span><span>&#128167; '+c.relative_humidity_2m+'%</span></div></div><div class="wx-fc">'+fc+'</div></div>'}catch(e){document.getElementById('wxWidget').innerHTML='<div style="background:var(--bg-gray);border-radius:12px;padding:20px;text-align:center;color:var(--mid);font-size:.85rem">Weather unavailable</div>'}})();
 
-// Allow Enter key to submit
-document.getElementById('pwInput').addEventListener('keydown', function(e) {
-  if (e.key === 'Enter') checkPassword();
-});
-</script>
-
-<script>
-// ===== NAV SCROLL =====
-const nav = document.getElementById('mainNav');
-window.addEventListener('scroll', () => { nav.classList.toggle('scrolled', window.scrollY > 50); });
-
-// ===== WEATHER WIDGET =====
-// Uses Open-Meteo API (free, no key required)
-// West Bloomfield / Middle Straits Lake coordinates
-const LAKE_LAT = 42.5756;
-const LAKE_LON = -83.3916;
-
-const WMO_CODES = {
-  0: { icon: '&#9728;&#65039;', desc: 'Clear skies' },
-  1: { icon: '&#127780;&#65039;', desc: 'Mostly clear' },
-  2: { icon: '&#9925;', desc: 'Partly cloudy' },
-  3: { icon: '&#9729;&#65039;', desc: 'Overcast' },
-  45: { icon: '&#127787;&#65039;', desc: 'Foggy' },
-  48: { icon: '&#127787;&#65039;', desc: 'Fog' },
-  51: { icon: '&#127782;&#65039;', desc: 'Light drizzle' },
-  53: { icon: '&#127782;&#65039;', desc: 'Drizzle' },
-  55: { icon: '&#127782;&#65039;', desc: 'Heavy drizzle' },
-  61: { icon: '&#127783;&#65039;', desc: 'Light rain' },
-  63: { icon: '&#127783;&#65039;', desc: 'Rain' },
-  65: { icon: '&#127783;&#65039;', desc: 'Heavy rain' },
-  66: { icon: '&#127783;&#65039;', desc: 'Freezing rain' },
-  67: { icon: '&#127783;&#65039;', desc: 'Freezing rain' },
-  71: { icon: '&#127784;&#65039;', desc: 'Light snow' },
-  73: { icon: '&#127784;&#65039;', desc: 'Snow' },
-  75: { icon: '&#127784;&#65039;', desc: 'Heavy snow' },
-  77: { icon: '&#127784;&#65039;', desc: 'Snow grains' },
-  80: { icon: '&#127783;&#65039;', desc: 'Rain showers' },
-  81: { icon: '&#127783;&#65039;', desc: 'Rain showers' },
-  82: { icon: '&#127783;&#65039;', desc: 'Heavy showers' },
-  85: { icon: '&#127784;&#65039;', desc: 'Snow showers' },
-  86: { icon: '&#127784;&#65039;', desc: 'Heavy snow showers' },
-  95: { icon: '&#9889;', desc: 'Thunderstorm' },
-  96: { icon: '&#9889;', desc: 'Thunderstorm w/ hail' },
-  99: { icon: '&#9889;', desc: 'Severe thunderstorm' },
-};
-
-function getWeatherInfo(code) {
-  return WMO_CODES[code] || { icon: '&#127780;&#65039;', desc: 'Fair' };
-}
-
-async function loadWeather() {
-  const widget = document.getElementById('weatherWidget');
-  try {
-    const url = 'https://api.open-meteo.com/v1/forecast?latitude=' + LAKE_LAT +
-      '&longitude=' + LAKE_LON +
-      '&current=temperature_2m,relative_humidity_2m,wind_speed_10m,weather_code' +
-      '&daily=weather_code,temperature_2m_max,temperature_2m_min' +
-      '&temperature_unit=fahrenheit&wind_speed_unit=mph&precipitation_unit=inch' +
-      '&timezone=America%2FDetroit&forecast_days=7';
-
-    const res = await fetch(url);
-    if (!res.ok) throw new Error('Weather API error');
-    const data = await res.json();
-
-    const current = data.current;
-    const daily = data.daily;
-    const now = getWeatherInfo(current.weather_code);
-
-    const days = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
-
-    let forecastHTML = '';
-    for (let i = 1; i < 7; i++) {
-      const d = new Date(daily.time[i] + 'T12:00:00');
-      const dayName = i === 1 ? 'Tomorrow' : days[d.getDay()];
-      const info = getWeatherInfo(daily.weather_code[i]);
-      forecastHTML += '<div class="forecast-day">' +
-        '<div class="fd-name">' + dayName + '</div>' +
-        '<div class="fd-icon">' + info.icon + '</div>' +
-        '<div class="fd-temps"><span class="fd-hi">' + Math.round(daily.temperature_2m_max[i]) + '&deg;</span> ' +
-        '<span class="fd-lo">' + Math.round(daily.temperature_2m_min[i]) + '&deg;</span></div>' +
-        '</div>';
-    }
-
-    widget.innerHTML =
-      '<div class="weather-now">' +
-        '<div class="w-icon">' + now.icon + '</div>' +
-        '<div class="w-temp">' + Math.round(current.temperature_2m) + '&deg;F</div>' +
-        '<div class="w-desc">' + now.desc + '</div>' +
-        '<div class="w-details">' +
-          '<span>&#128168; ' + Math.round(current.wind_speed_10m) + ' mph</span>' +
-          '<span>&#128167; ' + current.relative_humidity_2m + '%</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="weather-forecast">' + forecastHTML + '</div>';
-  } catch (e) {
-    widget.innerHTML =
-      '<div class="weather-now" style="border:none;">' +
-        '<div class="w-icon">&#127780;&#65039;</div>' +
-        '<div class="w-desc" style="font-size:1rem;">Could not load weather right now.<br>Check back in a bit!</div>' +
-      '</div>';
-    console.error('Weather load failed:', e);
-  }
-}
-loadWeather();
-
-// ===== FLOOR TABS =====
-document.querySelectorAll('.floor-tab').forEach(function(tab) {
-  tab.addEventListener('click', function() {
-    document.querySelectorAll('.floor-tab').forEach(function(t) { t.classList.remove('active'); });
-    document.querySelectorAll('.floor-content').forEach(function(c) { c.classList.remove('active'); });
-    tab.classList.add('active');
-    document.getElementById('floor-' + tab.dataset.floor).classList.add('active');
-  });
-});
-
-// ===== MANUAL TABS =====
-document.querySelectorAll('.manual-tab').forEach(tab => {
-  tab.addEventListener('click', () => {
-    document.querySelectorAll('.manual-tab').forEach(t => t.classList.remove('active'));
-    document.querySelectorAll('.manual-content').forEach(c => c.classList.remove('active'));
-    tab.classList.add('active');
-    document.getElementById('tab-' + tab.dataset.tab).classList.add('active');
-  });
-});
-
-// ===== ANIMATED COUNTERS =====
-const stats = document.querySelectorAll('.stat-num');
-const statsObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      const el = entry.target;
-      const target = parseInt(el.dataset.target);
-      let current = 0;
-      const increment = Math.ceil(target / 30);
-      const timer = setInterval(() => {
-        current += increment;
-        if (current >= target) { current = target; clearInterval(timer); }
-        el.textContent = current;
-      }, 40);
-      statsObserver.unobserve(el);
-    }
-  });
-}, { threshold: 0.5 });
-stats.forEach(stat => statsObserver.observe(stat));
-
-// ===== FADE IN ON SCROLL =====
-const fadeEls = document.querySelectorAll('.welcome-card, .arrival-card, .hoa-rule, .manual-list li, .gb-entry, .photo-item, .forecast-day');
-const fadeObserver = new IntersectionObserver((entries) => {
-  entries.forEach(entry => {
-    if (entry.isIntersecting) {
-      entry.target.style.opacity = '1';
-      entry.target.style.transform = entry.target.style.transform
-        ? entry.target.style.transform.replace('translateY(20px)', 'translateY(0)')
-        : 'translateY(0)';
-      fadeObserver.unobserve(entry.target);
-    }
-  });
-}, { threshold: 0.1 });
-fadeEls.forEach((el, i) => {
-  el.style.opacity = '0';
-  el.style.transform = 'translateY(20px) ' + (el.style.transform || '');
-  el.style.transition = 'opacity 0.6s ease ' + (i % 4 * 0.1) + 's, transform 0.6s ease ' + (i % 4 * 0.1) + 's';
-  fadeObserver.observe(el);
-});
-
-// ===== GUESTBOOK =====
-function submitGuestbook() {
-  const name = document.getElementById('gbName').value.trim();
-  const msg = document.getElementById('gbMessage').value.trim();
-  if (!name || !msg) { alert('Please fill in your name and a message!'); return; }
-  const entries = document.querySelector('.guestbook-entries');
-  const tilts = [-2, -1, 0.5, 1, 1.5, -0.5];
-  const tilt = tilts[Math.floor(Math.random() * tilts.length)];
-  const entry = document.createElement('div');
-  entry.className = 'gb-entry';
-  entry.style.cssText = '--tilt:' + tilt + 'deg; opacity:0; transform:translateY(20px) rotate(' + tilt + 'deg);';
-  const now = new Date();
-  const month = now.toLocaleString('default', { month: 'long' });
-  entry.innerHTML = '<p>' + msg.replace(/</g, '&lt;') + '</p><div class="gb-author">&mdash; ' + name.replace(/</g, '&lt;') + ', ' + month + ' ' + now.getFullYear() + '</div>';
-  entries.prepend(entry);
-  requestAnimationFrame(() => {
-    entry.style.transition = 'all 0.5s ease';
-    entry.style.opacity = '1';
-    entry.style.transform = 'translateY(0) rotate(' + tilt + 'deg)';
-  });
-  document.getElementById('gbName').value = '';
-  document.getElementById('gbMessage').value = '';
-}
-
-// ===== LOCAL GUIDE DATA & MAP =====
-var HOUSE = { lat: 42.5756, lng: -83.3916 };
-function haversine(lat1,lon1,lat2,lon2) {
-  var R=3959, dLat=(lat2-lat1)*Math.PI/180, dLon=(lon2-lon1)*Math.PI/180;
-  var a=Math.sin(dLat/2)*Math.sin(dLat/2)+Math.cos(lat1*Math.PI/180)*Math.cos(lat2*Math.PI/180)*Math.sin(dLon/2)*Math.sin(dLon/2);
-  return R*2*Math.atan2(Math.sqrt(a),Math.sqrt(1-a));
-}
-var PLACES = [
-  {name:"CJ's Brewing Company",cat:"Brewery",icon:"\uD83C\uDF7A",lat:42.577,lng:-83.443,rating:4.4,reviews:1230,desc:"Brewery & restaurant on Richardson Rd. Detroit-style square pizza, craft beers, great patio."},
-  {name:"West End Kitchen & Bar",cat:"Restaurant",icon:"\uD83C\uDF7D",lat:42.578,lng:-83.362,rating:4.4,reviews:280,desc:"Upscale casual on Orchard Lake Rd. Great cocktails, burgers, hummus. Weekend brunch."},
-  {name:"22fifteen Kitchen & Cocktails",cat:"Restaurant",icon:"\uD83C\uDF78",lat:42.558,lng:-83.440,rating:4.5,reviews:203,desc:"Modern upscale dining. Excellent cocktails, great for date night or special occasions."},
-  {name:"Vive Restaurant",cat:"Restaurant",icon:"\uD83C\uDF7D",lat:42.530,lng:-83.358,rating:4.5,reviews:223,desc:"Northwestern Hwy. Branzino, wagyu burger, creative cocktails. Gorgeous ambiance."},
-  {name:"TEN 11 Grill",cat:"Restaurant",icon:"\uD83E\uDD57",lat:42.555,lng:-83.401,rating:4.4,reviews:311,desc:"Mediterranean bowls on Drake Rd. Fresh, fast, affordable. Great shawarma and falafel."},
-  {name:"Crispelli's Bakery & Pizzeria",cat:"Pizza",icon:"\uD83C\uDF55",lat:42.540,lng:-83.361,rating:4.4,reviews:1567,desc:"Orchard Lake Rd. Great pizza, fresh bakery, solid Italian menu. Self-serve or full pies."},
-  {name:"Papa's Pizza & BBQ",cat:"Pizza",icon:"\uD83C\uDF55",lat:42.540,lng:-83.437,rating:4.9,reviews:512,desc:"Haggerty Rd. Specialty square pizzas, BBQ chicken standout. Vegan & GF options."},
-  {name:"UK Pizza Bros",cat:"Pizza",icon:"\uD83C\uDF55",lat:42.602,lng:-83.349,rating:4.8,reviews:38,desc:"Orchard Lake Rd. Creative pies like butter chicken pizza. Fresh, fun, great owners."},
-  {name:"Melt N Dip",cat:"Desserts",icon:"\uD83C\uDF6B",lat:42.540,lng:-83.362,rating:4.4,reviews:601,desc:"Lava cakes, crepes, chocolate-covered fruit, waffles. Open late. A family favorite."},
-  {name:"44 Scoops",cat:"Desserts",icon:"\uD83C\uDF68",lat:42.547,lng:-83.359,rating:4.4,reviews:190,desc:"Classic ice cream shop. Ray's, Ashby's, Guernsey. Flights to try flavors. Open late weekends."},
-  {name:"Sweet Dreams Bakery",cat:"Desserts",icon:"\uD83C\uDF70",lat:42.575,lng:-83.361,rating:4.5,reviews:434,desc:"Custom cakes, baklava, cookie dough cheesecake. Right on Orchard Lake Rd near the house."},
-  {name:"Mochinut",cat:"Desserts",icon:"\uD83C\uDF69",lat:42.544,lng:-83.437,rating:4.6,reviews:108,desc:"Korean mochi donuts, corn dogs, ube lattes, ramen bar. Fun & unique. Kids love it."},
-  {name:"Bean & Bagel",cat:"Coffee",icon:"\u2615",lat:42.588,lng:-83.414,rating:4.9,reviews:33,desc:"Commerce Rd \u2014 closest coffee to the house. Fresh bagel sandwiches, quality espresso."},
-  {name:"Matari Coffee Co",cat:"Coffee",icon:"\u2615",lat:42.547,lng:-83.360,rating:4.6,reviews:221,desc:"Specialty Yemeni-style coffee. Iced pistachio latte is a hit. Open until midnight Fri/Sat."},
-  {name:"Qahwah House",cat:"Coffee",icon:"\u2615",lat:42.529,lng:-83.378,rating:4.3,reviews:158,desc:"Authentic Yemeni coffee, warm atmosphere. Great for a chill evening or morning ritual."},
-  {name:"Soul Cafe",cat:"Breakfast",icon:"\uD83E\uDD5E",lat:42.555,lng:-83.401,rating:4.6,reviews:493,desc:"Drake Rd. Kosher brunch spot with a mission. Amazing salmon burger, great French toast."},
-  {name:"The Breakfast Club",cat:"Breakfast",icon:"\uD83E\uDD5E",lat:42.547,lng:-83.439,rating:4.5,reviews:972,desc:"Haggerty Rd. Classic breakfast & brunch. Flan-style French toast is a standout."},
-  {name:"Sunny's Cafe",cat:"Breakfast",icon:"\uD83E\uDD5E",lat:42.541,lng:-83.361,rating:4.4,reviews:299,desc:"Orchard Lake Rd. Solid diner breakfast. Fluffy Mexican omelette, friendly staff."},
-  {name:"Alchile Mexican Grill",cat:"Mexican",icon:"\uD83C\uDF2E",lat:42.545,lng:-83.437,rating:4.6,reviews:915,desc:"Haggerty Rd. Best street tacos around. Beef tongue, lamb, fresh rice water. Authentic."},
-  {name:"Grand Azteca",cat:"Mexican",icon:"\uD83C\uDF2E",lat:42.548,lng:-83.438,rating:4.0,reviews:854,desc:"Full-service Mexican. Good fajitas, margaritas, colorful decor. Has a robot server!"},
-  {name:"El Nibble Nook",cat:"Mexican",icon:"\uD83C\uDF2E",lat:42.562,lng:-83.439,rating:4.2,reviews:726,desc:"Haggerty Rd. Longtime local favorite. Great fried avocado, enchiladas, margaritas."},
-  {name:"Shangri-La",cat:"Asian",icon:"\uD83E\uDD62",lat:42.545,lng:-83.359,rating:4.1,reviews:1188,desc:"Orchard Lake Rd. Best dim sum in the area. Extensive Chinese menu. A local institution."},
-  {name:"Jiang Nan Noodle House",cat:"Asian",icon:"\uD83C\uDF5C",lat:42.512,lng:-83.358,rating:4.4,reviews:1019,desc:"Hand-pulled noodles made in front of you. Excellent dumplings. Worth the 15 min drive."},
-  {name:"Library Sports Pub",cat:"Bar & Grill",icon:"\uD83C\uDFC8",lat:42.544,lng:-83.438,rating:4.3,reviews:1321,desc:"Haggerty Rd. Sports bar with solid food. Cajun tortellini, great chicken tortilla soup."},
-  {name:"TreeRunner Adventure Park",cat:"Activities",icon:"\uD83C\uDF32",lat:42.545,lng:-83.402,rating:4.8,reviews:1552,desc:"Aerial ropes course, mini golf, bounce forest. All ages. Reserve ahead on weekends."},
-  {name:"Sinbad Fruit Market",cat:"Grocery",icon:"\uD83D\uDED2",lat:42.545,lng:-83.437,rating:4.7,reviews:455,desc:"Haggerty Rd. Fresh produce, bakery, international items. Amazing quality & prices."},
-  {name:"Palm International Market",cat:"Grocery",icon:"\uD83D\uDED2",lat:42.564,lng:-83.436,rating:4.6,reviews:113,desc:"Haggerty Rd. Middle Eastern grocery, fresh Iraqi bread, prepared foods, great falafel."},
-  {name:"Quik Stop Market",cat:"Grocery",icon:"\uD83D\uDED2",lat:42.568,lng:-83.420,rating:4.7,reviews:63,desc:"Pontiac Trail. Closest liquor/convenience store to the house. Friendly neighborhood spot."},
+// PLACES
+var H={lat:42.5756,lng:-83.3916};
+function hav(a,b,c,d){var R=3959,dL=(c-a)*Math.PI/180,dN=(d-b)*Math.PI/180;var x=Math.sin(dL/2)*Math.sin(dL/2)+Math.cos(a*Math.PI/180)*Math.cos(c*Math.PI/180)*Math.sin(dN/2)*Math.sin(dN/2);return R*2*Math.atan2(Math.sqrt(x),Math.sqrt(1-x))}
+var P=[
+{n:"CJ's Brewing",c:"Restaurant",ic:"\uD83C\uDF7A",lat:42.577,lng:-83.443,r:4.4,rv:1230,d:"Brewery. Square pizza, craft beers, patio."},
+{n:"West End Kitchen",c:"Restaurant",ic:"\uD83C\uDF7D",lat:42.578,lng:-83.362,r:4.4,rv:280,d:"American. Upscale casual, cocktails, brunch."},
+{n:"22fifteen",c:"Restaurant",ic:"\uD83C\uDF78",lat:42.558,lng:-83.440,r:4.5,rv:203,d:"American. Modern upscale, great cocktails."},
+{n:"Vive",c:"Restaurant",ic:"\uD83C\uDF7D",lat:42.530,lng:-83.358,r:4.5,rv:223,d:"American. Branzino, wagyu burger."},
+{n:"TEN 11 Grill",c:"Restaurant",ic:"\uD83E\uDD57",lat:42.555,lng:-83.401,r:4.4,rv:311,d:"Mediterranean. Bowls, shawarma, falafel."},
+{n:"Crispelli's",c:"Restaurant",ic:"\uD83C\uDF55",lat:42.540,lng:-83.361,r:4.4,rv:1567,d:"Pizza & bakery. Great pies, Italian menu."},
+{n:"Papa's Pizza",c:"Restaurant",ic:"\uD83C\uDF55",lat:42.540,lng:-83.437,r:4.9,rv:512,d:"Pizza & BBQ. Specialty squares. Vegan/GF."},
+{n:"UK Pizza Bros",c:"Restaurant",ic:"\uD83C\uDF55",lat:42.602,lng:-83.349,r:4.8,rv:38,d:"Pizza. Butter chicken pizza is the move."},
+{n:"Soul Cafe",c:"Restaurant",ic:"\uD83E\uDD5E",lat:42.555,lng:-83.401,r:4.6,rv:493,d:"Brunch. Kosher. Salmon burger, French toast."},
+{n:"Breakfast Club",c:"Restaurant",ic:"\uD83E\uDD5E",lat:42.547,lng:-83.439,r:4.5,rv:972,d:"Breakfast. Flan-style French toast."},
+{n:"Sunny's Cafe",c:"Restaurant",ic:"\uD83E\uDD5E",lat:42.541,lng:-83.361,r:4.4,rv:299,d:"Breakfast. Fluffy Mexican omelette."},
+{n:"Alchile Mexican",c:"Restaurant",ic:"\uD83C\uDF2E",lat:42.545,lng:-83.437,r:4.6,rv:915,d:"Mexican. Best street tacos. Authentic."},
+{n:"Grand Azteca",c:"Restaurant",ic:"\uD83C\uDF2E",lat:42.548,lng:-83.438,r:4.0,rv:854,d:"Mexican. Fajitas, margaritas."},
+{n:"El Nibble Nook",c:"Restaurant",ic:"\uD83C\uDF2E",lat:42.562,lng:-83.439,r:4.2,rv:726,d:"Mexican. Fried avocado, enchiladas, margs."},
+{n:"Shangri-La",c:"Restaurant",ic:"\uD83E\uDD62",lat:42.545,lng:-83.359,r:4.1,rv:1188,d:"Chinese. Best dim sum in the area."},
+{n:"Jiang Nan Noodle",c:"Restaurant",ic:"\uD83C\uDF5C",lat:42.512,lng:-83.358,r:4.4,rv:1019,d:"Chinese. Hand-pulled noodles, dumplings."},
+{n:"Library Pub",c:"Restaurant",ic:"\uD83C\uDFC8",lat:42.544,lng:-83.438,r:4.3,rv:1321,d:"Sports bar. Cajun tortellini, soup."},
+{n:"Melt N Dip",c:"Desserts",ic:"\uD83C\uDF6B",lat:42.540,lng:-83.362,r:4.4,rv:601,d:"Lava cakes, crepes, waffles. Open late."},
+{n:"44 Scoops",c:"Desserts",ic:"\uD83C\uDF68",lat:42.547,lng:-83.359,r:4.4,rv:190,d:"Ice cream. Ray's, Ashby's, Guernsey."},
+{n:"Sweet Dreams",c:"Desserts",ic:"\uD83C\uDF70",lat:42.575,lng:-83.361,r:4.5,rv:434,d:"Custom cakes, baklava, cheesecakes."},
+{n:"Mochinut",c:"Desserts",ic:"\uD83C\uDF69",lat:42.544,lng:-83.437,r:4.6,rv:108,d:"Korean donuts, corn dogs, ube lattes."},
+{n:"Bean & Bagel",c:"Coffee",ic:"\u2615",lat:42.588,lng:-83.414,r:4.9,rv:33,d:"Closest coffee. Bagels, espresso."},
+{n:"Matari Coffee",c:"Coffee",ic:"\u2615",lat:42.547,lng:-83.360,r:4.6,rv:221,d:"Yemeni coffee. Open late Fri/Sat."},
+{n:"Qahwah House",c:"Coffee",ic:"\u2615",lat:42.529,lng:-83.378,r:4.3,rv:158,d:"Authentic Yemeni coffee. Chill vibe."},
+{n:"TreeRunner",c:"Activities",ic:"\uD83C\uDF32",lat:42.545,lng:-83.402,r:4.8,rv:1552,d:"Ropes course, mini golf, bounce forest."},
+{n:"Sinbad Market",c:"Grocery",ic:"\uD83D\uDED2",lat:42.545,lng:-83.437,r:4.7,rv:455,d:"Fresh produce, bakery, international."},
+{n:"Palm Market",c:"Grocery",ic:"\uD83D\uDED2",lat:42.564,lng:-83.436,r:4.6,rv:113,d:"Middle Eastern. Bread, prepared foods."},
+{n:"Quik Stop",c:"Grocery",ic:"\uD83D\uDED2",lat:42.568,lng:-83.420,r:4.7,rv:63,d:"Closest convenience/liquor store."},
 ];
-// Compute distances
-PLACES.forEach(function(p) { p.dist = haversine(HOUSE.lat,HOUSE.lng,p.lat,p.lng); });
+P.forEach(function(p){p.dist=hav(H.lat,H.lng,p.lat,p.lng)});
+var CATS=['All'];P.forEach(function(p){if(CATS.indexOf(p.c)===-1)CATS.push(p.c)});
+var aCat='All',gMap=null,gMk=[];
+function initMap(){if(!document.getElementById('guideMap')||typeof L==='undefined')return;gMap=L.map('guideMap',{scrollWheelZoom:false}).setView([H.lat,H.lng],12);L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{attribution:'&copy; OSM',maxZoom:18}).addTo(gMap);L.marker([H.lat,H.lng],{icon:L.divIcon({html:'<div style="font-size:20px">\uD83C\uDFE0</div>',className:'',iconSize:[20,20],iconAnchor:[10,20]}),zIndexOffset:1000}).addTo(gMap).bindPopup('<b>Dickson Lake House</b>');addMk()}
+function addMk(){gMk.forEach(function(m){gMap.removeLayer(m)});gMk=[];var f=aCat==='All'?P:P.filter(function(p){return p.c===aCat});var b=[[H.lat,H.lng]];f.forEach(function(p){var m=L.marker([p.lat,p.lng],{icon:L.divIcon({html:'<div style="font-size:14px">'+p.ic+'</div>',className:'',iconSize:[14,14],iconAnchor:[7,14]})}).addTo(gMap).bindPopup('<b>'+p.n+'</b><br>'+p.r+' &#9733; · '+p.dist.toFixed(1)+' mi');gMk.push(m);b.push([p.lat,p.lng])});if(b.length>1)gMap.fitBounds(b,{padding:[20,20]})}
+function renderFilters(){var el=document.getElementById('sFilters');var h='';var counts={};P.forEach(function(p){counts[p.c]=(counts[p.c]||0)+1});CATS.forEach(function(c){var n=c==='All'?P.length:counts[c]||0;h+='<button class="sf'+(c===aCat?' active':'')+'" onclick="setCat(\''+c+'\')">'+c+' ('+n+')</button>'});el.innerHTML=h}
+function setCat(c){aCat=c;renderFilters();renderSpots();addMk()}
+function renderSpots(){var s=document.getElementById('sSort').value;var f=aCat==='All'?P.slice():P.filter(function(p){return p.c===aCat});if(s==='distance')f.sort(function(a,b){return a.dist-b.dist});else if(s==='rating')f.sort(function(a,b){return b.r-a.r||b.rv-a.rv});else if(s==='reviews')f.sort(function(a,b){return b.rv-a.rv});else f.sort(function(a,b){return a.n.localeCompare(b.n)});var el=document.getElementById('spotsList');if(!f.length){el.innerHTML='<p style="color:var(--mid);padding:16px 0">Nothing here</p>';return}
+if(aCat!=='All'){el.innerHTML=f.map(spotHtml).join('');return}
+var g={},co=[];f.forEach(function(p){if(!g[p.c]){g[p.c]=[];co.push(p.c)}g[p.c].push(p)});
+var h='';co.forEach(function(c){h+='<div class="spot-cat"><div class="spot-cat-head" onclick="togCat(this)"><h4>'+g[c][0].ic+' '+c+'</h4><div style="display:flex;gap:8px;align-items:center"><span class="sc-cnt">'+g[c].length+'</span><span class="sc-chev">&#9660;</span></div></div><div class="spot-items">'+g[c].map(spotHtml).join('')+'</div></div>'});el.innerHTML=h}
+function spotHtml(p){var u='https://maps.google.com/?q='+encodeURIComponent(p.n+' West Bloomfield MI');return '<div class="spot" onclick="panTo(\''+p.n.replace(/'/g,"\\'")+'\')">'+'<div class="sp-icon">'+p.ic+'</div><div class="sp-info"><h5>'+p.n+'</h5><p>'+p.d+'</p></div><div class="sp-rate">'+p.r+' &#9733; <span>('+p.rv.toLocaleString()+')</span></div><div class="sp-right"><span class="sp-dist">'+p.dist.toFixed(1)+' mi</span><a href="'+u+'" target="_blank" class="sp-link" onclick="event.stopPropagation()">Map</a></div></div>'}
+function togCat(el){el.classList.toggle('open');el.nextElementSibling.classList.toggle('open')}
+function panTo(n){var p=P.find(function(x){return x.n===n});if(p&&gMap){gMap.setView([p.lat,p.lng],14);gMk.forEach(function(m){if(Math.abs(m.getLatLng().lat-p.lat)<.001&&Math.abs(m.getLatLng().lng-p.lng)<.001)m.openPopup()});document.getElementById('guideMap').scrollIntoView({behavior:'smooth',block:'center'})}}
+renderFilters();renderSpots();setTimeout(initMap,300);
 
-// Categories
-var CATS = ['All'];
-PLACES.forEach(function(p) { if (CATS.indexOf(p.cat) === -1) CATS.push(p.cat); });
-var activeCat = 'All';
+// FAMILY COUNTERS
+var fObs=new IntersectionObserver(function(e){e.forEach(function(en){if(en.isIntersecting){var el=en.target,t=+el.dataset.t,c=0,inc=Math.ceil(t/20);var tm=setInterval(function(){c+=inc;if(c>=t){c=t;clearInterval(tm)}el.textContent=c},30);fObs.unobserve(el)}})},{threshold:.5});document.querySelectorAll('.fn').forEach(function(el){fObs.observe(el)});
 
-// Init map
-var guideMapEl = document.getElementById('guideMap');
-var gMap = null;
-var gMarkers = [];
+// GUESTBOOK
+function submitGb(){var n=document.getElementById('gbN').value.trim(),m=document.getElementById('gbM').value.trim();if(!n||!m)return alert('Fill in both fields');var el=document.getElementById('gbGrid');var d=document.createElement('div');d.className='gb';d.style.cssText='opacity:0;transform:translateY(8px);transition:all .3s';var mo=new Date().toLocaleString('default',{month:'long'});d.innerHTML='<p>'+m.replace(/</g,'&lt;')+'</p><div class="gb-a">&mdash; '+n.replace(/</g,'&lt;')+', '+mo+' '+new Date().getFullYear()+'</div>';el.prepend(d);requestAnimationFrame(function(){d.style.opacity='1';d.style.transform='none'});document.getElementById('gbN').value='';document.getElementById('gbM').value=''}
 
-function initGuideMap() {
-  if (!guideMapEl || typeof L === 'undefined') return;
-  gMap = L.map('guideMap', { scrollWheelZoom: false }).setView([HOUSE.lat, HOUSE.lng], 12);
-  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; OpenStreetMap contributors', maxZoom: 18
-  }).addTo(gMap);
-  // House marker
-  var houseIcon = L.divIcon({ html: '<div style="font-size:28px;text-shadow:0 2px 6px rgba(0,0,0,0.3);">\uD83C\uDFE0</div>', className:'', iconSize:[28,28], iconAnchor:[14,28] });
-  L.marker([HOUSE.lat, HOUSE.lng], { icon: houseIcon, zIndexOffset: 1000 })
-    .addTo(gMap).bindPopup('<strong>The Dickson Lake House</strong><br>3726 Elder Rd S');
-  addGuideMarkers();
-}
-
-function addGuideMarkers() {
-  gMarkers.forEach(function(m) { gMap.removeLayer(m); });
-  gMarkers = [];
-  var filtered = activeCat === 'All' ? PLACES : PLACES.filter(function(p) { return p.cat === activeCat; });
-  var bounds = [[HOUSE.lat, HOUSE.lng]];
-  filtered.forEach(function(p) {
-    var icon = L.divIcon({ html: '<div style="font-size:20px;filter:drop-shadow(0 1px 3px rgba(0,0,0,0.3));">'+p.icon+'</div>', className:'', iconSize:[20,20], iconAnchor:[10,20] });
-    var m = L.marker([p.lat, p.lng], { icon: icon })
-      .addTo(gMap)
-      .bindPopup('<strong>'+p.name+'</strong><br>'+p.cat+' &bull; '+p.rating+' \u2605 ('+p.reviews+')<br>'+p.dist.toFixed(1)+' mi from house');
-    gMarkers.push(m);
-    bounds.push([p.lat, p.lng]);
-  });
-  if (bounds.length > 1) gMap.fitBounds(bounds, { padding: [30,30] });
-}
-
-function renderFilters() {
-  var el = document.getElementById('guideFilters');
-  var counts = {};
-  PLACES.forEach(function(p) { counts[p.cat] = (counts[p.cat]||0)+1; });
-  var html = '';
-  CATS.forEach(function(c) {
-    var cnt = c === 'All' ? PLACES.length : (counts[c]||0);
-    var cls = c === activeCat ? ' active' : '';
-    html += '<button class="guide-filter'+cls+'" onclick="setGuideCat(\''+c+'\')">' + c + ' <span class="filter-count">'+cnt+'</span></button>';
-  });
-  el.innerHTML = html;
-}
-
-function setGuideCat(cat) {
-  activeCat = cat;
-  renderFilters();
-  renderGuideList();
-  addGuideMarkers();
-}
-
-function starsHtml(rating) {
-  var full = Math.floor(rating), half = rating % 1 >= 0.3;
-  var s = '';
-  for (var i=0;i<full;i++) s += '\u2605';
-  if (half) s += '\u2606';
-  while (s.length < 5) s += '\u2606';
-  return s;
-}
-
-function renderGuideList() {
-  var sort = document.getElementById('guideSort').value;
-  var filtered = activeCat === 'All' ? PLACES.slice() : PLACES.filter(function(p) { return p.cat === activeCat; });
-  if (sort === 'distance') filtered.sort(function(a,b) { return a.dist - b.dist; });
-  else if (sort === 'rating') filtered.sort(function(a,b) { return b.rating - a.rating || b.reviews - a.reviews; });
-  else if (sort === 'reviews') filtered.sort(function(a,b) { return b.reviews - a.reviews; });
-  else if (sort === 'name') filtered.sort(function(a,b) { return a.name.localeCompare(b.name); });
-
-  var el = document.getElementById('guideList');
-  if (filtered.length === 0) { el.innerHTML = '<div class="guide-empty">No spots in this category yet!</div>'; return; }
-
-  // Group by category
-  var groups = {};
-  var catOrder = [];
-  filtered.forEach(function(p) {
-    if (!groups[p.cat]) { groups[p.cat] = []; catOrder.push(p.cat); }
-    groups[p.cat].push(p);
-  });
-
-  var catIcons = {Brewery:'\uD83C\uDF7A',Restaurant:'\uD83C\uDF7D',Pizza:'\uD83C\uDF55',Desserts:'\uD83C\uDF70',Coffee:'\u2615',Breakfast:'\uD83E\uDD5E',Mexican:'\uD83C\uDF2E',Asian:'\uD83E\uDD62','Bar & Grill':'\uD83C\uDFC8',Activities:'\uD83C\uDF32',Grocery:'\uD83D\uDED2'};
-
-  // If filtering to one category, show flat list (already expanded)
-  if (activeCat !== 'All') {
-    var html = '<div class="guide-list">';
-    filtered.forEach(function(p, i) {
-      html += buildItemHtml(p, i);
-    });
-    html += '</div>';
-    el.innerHTML = html;
-    return;
-  }
-
-  // Grouped collapsible view
-  var html = '';
-  catOrder.forEach(function(cat) {
-    var items = groups[cat];
-    var icon = catIcons[cat] || '\uD83D\uDCCD';
-    html += '<div class="guide-cat-group">' +
-      '<div class="guide-cat-header" onclick="toggleCatGroup(this)">' +
-        '<h4>' + icon + ' ' + cat + '</h4>' +
-        '<div style="display:flex;align-items:center;gap:10px;">' +
-          '<span class="cat-count">' + items.length + ' spot' + (items.length > 1 ? 's' : '') + '</span>' +
-          '<span class="cat-chevron">\u25BC</span>' +
-        '</div>' +
-      '</div>' +
-      '<div class="guide-cat-items">' +
-        '<div class="guide-list">';
-    items.forEach(function(p, i) {
-      html += buildItemHtml(p, i);
-    });
-    html += '</div></div></div>';
-  });
-  el.innerHTML = html;
-}
-
-function buildItemHtml(p, i) {
-  var mapsUrl = 'https://maps.google.com/?q=' + encodeURIComponent(p.name + ' West Bloomfield MI');
-  return '<div class="guide-item" onclick="panToPlace(\'' + p.name.replace(/'/g,"\\'") + '\')" style="animation:fadeIn 0.3s ease '+(i*0.03)+'s forwards;">' +
-    '<div class="gi-icon">'+p.icon+'</div>' +
-    '<div class="gi-info">' +
-      '<h3>'+p.name+'</h3>' +
-      '<div class="gi-desc">'+p.desc+'</div>' +
-      '<div class="gi-meta">' +
-        '<span class="gi-stars">'+starsHtml(p.rating)+'</span>' +
-        '<span class="gi-score">'+p.rating+'</span>' +
-        '<span class="gi-count">('+p.reviews.toLocaleString()+')</span>' +
-      '</div>' +
-    '</div>' +
-    '<div class="gi-right">' +
-      '<span class="gi-dist">'+p.dist.toFixed(1)+' mi</span>' +
-      '<a href="'+mapsUrl+'" target="_blank" class="gi-dir" onclick="event.stopPropagation();">Map</a>' +
-    '</div>' +
-  '</div>';
-}
-
-function toggleCatGroup(header) {
-  header.classList.toggle('open');
-  var items = header.nextElementSibling;
-  items.classList.toggle('open');
-}
-
-function panToPlace(name) {
-  var p = PLACES.find(function(pl) { return pl.name === name; });
-  if (p && gMap) {
-    gMap.setView([p.lat, p.lng], 14);
-    gMarkers.forEach(function(m) {
-      if (Math.abs(m.getLatLng().lat - p.lat) < 0.001 && Math.abs(m.getLatLng().lng - p.lng) < 0.001) m.openPopup();
-    });
-    document.getElementById('guideMap').scrollIntoView({ behavior: 'smooth', block: 'center' });
-  }
-}
-
-// Initialize
-renderFilters();
-renderGuideList();
-// Delay map init slightly to ensure DOM is ready
-setTimeout(initGuideMap, 200);
-
-// ===== SMOOTH SCROLL =====
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function(e) {
-    e.preventDefault();
-    const target = document.querySelector(this.getAttribute('href'));
-    if (target) target.scrollIntoView({ behavior: 'smooth', block: 'start' });
-  });
-});
+// SMOOTH SCROLL
+document.querySelectorAll('a[href^="#"]').forEach(function(a){a.addEventListener('click',function(e){e.preventDefault();var t=document.querySelector(this.getAttribute('href'));if(t)t.scrollIntoView({behavior:'smooth',block:'start'})})});
 </script>
-
 </body>
 </html>
