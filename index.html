@@ -267,6 +267,69 @@ section { padding: 48px 24px; }
 }
 .arrival-address .addr-link:hover { background: var(--lake-deep); }
 
+/* ===== ABOUT THE HOUSE ===== */
+.about-house { background: var(--sand-light); }
+.house-stats {
+  display: flex; flex-wrap: wrap; gap: 10px; margin-bottom: 24px;
+}
+.house-stat {
+  background: white; border-radius: 10px; padding: 12px 18px;
+  display: flex; align-items: center; gap: 10px; border: 1.5px solid var(--sand);
+}
+.house-stat .hs-icon { font-size: 1.3rem; }
+.house-stat .hs-val {
+  font-family: 'Fredoka', sans-serif; font-weight: 700; font-size: 1.1rem; color: var(--lake-deep);
+}
+.house-stat .hs-label { font-size: 0.78rem; color: var(--text-light); }
+.floor-tabs {
+  display: flex; gap: 6px; margin-bottom: 16px;
+}
+.floor-tab {
+  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.82rem;
+  padding: 7px 16px; border-radius: 20px; border: 1.5px solid var(--lake-pale);
+  background: white; color: var(--lake-deep); cursor: pointer; transition: all 0.2s;
+}
+.floor-tab:hover, .floor-tab.active { background: var(--lake); color: white; border-color: var(--lake); }
+.floor-content { display: none; animation: fadeIn 0.4s ease-out; }
+.floor-content.active { display: block; }
+.floor-layout {
+  display: grid; grid-template-columns: 1fr 1fr; gap: 16px;
+}
+.floor-plan-wrap {
+  background: white; border-radius: 14px; padding: 16px;
+  border: 1.5px solid var(--lake-pale); min-height: 280px;
+  display: flex; align-items: center; justify-content: center;
+}
+.floor-rooms { display: flex; flex-direction: column; gap: 8px; }
+.room-card {
+  background: white; border-radius: 10px; padding: 12px 16px;
+  border-left: 3px solid var(--lake-light); box-shadow: 0 1px 6px rgba(0,0,0,0.03);
+  transition: all 0.2s; cursor: default;
+}
+.room-card:hover { border-left-color: var(--sunset); }
+.room-card .rc-header {
+  display: flex; align-items: center; justify-content: space-between; margin-bottom: 3px;
+}
+.room-card h4 {
+  font-family: 'Fredoka', sans-serif; font-weight: 600; font-size: 0.9rem; color: var(--lake-deep);
+  display: flex; align-items: center; gap: 6px;
+}
+.room-card .rc-badge {
+  font-family: 'Fredoka', sans-serif; font-weight: 500; font-size: 0.68rem;
+  background: var(--lake-pale); color: var(--lake-deep); padding: 2px 8px; border-radius: 6px;
+}
+.room-card p { color: var(--text-light); font-size: 0.8rem; line-height: 1.45; }
+.room-card .rc-amenities {
+  display: flex; gap: 6px; flex-wrap: wrap; margin-top: 6px;
+}
+.room-card .rc-amenity {
+  font-size: 0.7rem; color: var(--text-light); background: var(--lake-whisper);
+  padding: 2px 7px; border-radius: 5px;
+}
+@media (max-width: 768px) {
+  .floor-layout { grid-template-columns: 1fr; }
+}
+
 /* ===== WELCOME ===== */
 .welcome { background: var(--lake-whisper); }
 .welcome-grid {
@@ -592,6 +655,7 @@ footer .footer-copy { font-size:0.75rem; color:rgba(255,255,255,0.35); }
     <a href="#" class="nav-logo"><span class="wave-icon">&#127754;</span> The Dickson Lake House</a>
     <div class="nav-links">
       <a href="#arrival">Arrival</a>
+      <a href="#about-house">The House</a>
       <a href="#welcome">Welcome</a>
       <a href="#manual">House Guide</a>
       <a href="#guide">Local Spots</a>
@@ -650,6 +714,221 @@ footer .footer-copy { font-size:0.75rem; color:rgba(255,255,255,0.35); }
         <h3>What to Bring</h3>
         <p>We've got the basics covered &mdash; towels, linens, kitchen essentials. Just bring your clothes, sunscreen, and whatever you like to drink. Maybe a card game or two.</p>
         <div class="detail">Swimsuit is non-negotiable &#127946;</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT THE HOUSE -->
+<section class="about-house" id="about-house">
+  <div class="container">
+    <div class="section-tag">Your home on the lake</div>
+    <h2 class="section-title">About the House &#127969;</h2>
+    <p class="section-desc">8,000+ square feet on nearly an acre with 114 feet of private lakefront. Three levels, panoramic views, and room for the whole family.</p>
+
+    <div class="house-stats">
+      <div class="house-stat"><span class="hs-icon">&#128719;&#65039;</span><div><div class="hs-val">5</div><div class="hs-label">Bedrooms</div></div></div>
+      <div class="house-stat"><span class="hs-icon">&#128704;</span><div><div class="hs-val">5.5</div><div class="hs-label">Bathrooms</div></div></div>
+      <div class="house-stat"><span class="hs-icon">&#128208;</span><div><div class="hs-val">8,000+</div><div class="hs-label">Sq Ft</div></div></div>
+      <div class="house-stat"><span class="hs-icon">&#127754;</span><div><div class="hs-val">114 ft</div><div class="hs-label">Lake Frontage</div></div></div>
+      <div class="house-stat"><span class="hs-icon">&#128663;</span><div><div class="hs-val">3</div><div class="hs-label">Car Garage</div></div></div>
+      <div class="house-stat"><span class="hs-icon">&#127795;</span><div><div class="hs-val">~1 acre</div><div class="hs-label">Lot</div></div></div>
+    </div>
+
+    <div class="floor-tabs">
+      <button class="floor-tab active" data-floor="main">Main Level</button>
+      <button class="floor-tab" data-floor="upper">Upper Level</button>
+      <button class="floor-tab" data-floor="lower">Walkout Basement</button>
+    </div>
+
+    <!-- MAIN LEVEL -->
+    <div class="floor-content active" id="floor-main">
+      <div class="floor-layout">
+        <div class="floor-plan-wrap">
+          <svg viewBox="0 0 460 340" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:460px;">
+            <rect x="0" y="0" width="460" height="340" rx="12" fill="#f0f8fb"/>
+            <text x="230" y="20" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" fill="#5a727d">MAIN LEVEL &mdash; Lake Side &#8593;</text>
+            <!-- Living Room -->
+            <rect x="20" y="30" width="180" height="120" rx="6" fill="#d4ecf5" stroke="#1b6b8a" stroke-width="1.5"/>
+            <text x="110" y="80" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Living Room</text>
+            <text x="110" y="96" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Vaulted ceilings &bull; Fireplace</text>
+            <text x="110" y="110" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Floor-to-ceiling lake views</text>
+            <!-- Kitchen -->
+            <rect x="210" y="30" width="230" height="120" rx="6" fill="#faf3e6" stroke="#f5e6c8" stroke-width="1.5"/>
+            <text x="325" y="72" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Chef's Kitchen</text>
+            <text x="325" y="88" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Dual Subzero &bull; Thermador ovens</text>
+            <text x="325" y="102" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">2 sinks &bull; 2 dishwashers &bull; Walk-in pantry</text>
+            <text x="325" y="116" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Bar seating &bull; Beverage fridge</text>
+            <!-- Family Room -->
+            <rect x="20" y="160" width="140" height="80" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="90" y="196" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Family Room</text>
+            <text x="90" y="212" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">French doors &bull; Sunlit</text>
+            <!-- Study -->
+            <rect x="170" y="160" width="130" height="80" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="235" y="196" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Waterside Study</text>
+            <text x="235" y="212" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Balcony &bull; Lake sunset views</text>
+            <!-- Dining / Bar -->
+            <rect x="310" y="160" width="130" height="80" rx="6" fill="#faf3e6" stroke="#f5e6c8" stroke-width="1.5"/>
+            <text x="375" y="196" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Dining &amp; Bar</text>
+            <text x="375" y="212" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Open to kitchen &amp; living</text>
+            <!-- Entry -->
+            <rect x="150" y="260" width="160" height="60" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="230" y="290" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="11" font-weight="600" fill="#0e4257">Entry &amp; Foyer</text>
+            <text x="230" y="306" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Panoramic lake views on entry</text>
+            <!-- Arrows -->
+            <text x="230" y="255" text-anchor="middle" font-size="10" fill="#5a727d">&#8593;</text>
+            <!-- Lake indicator -->
+            <rect x="0" y="0" width="460" height="6" rx="3" fill="#3da5c2" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="floor-rooms">
+          <div class="room-card">
+            <div class="rc-header"><h4>&#127968; Step-Down Living Room</h4></div>
+            <p>Vaulted double-height ceilings with a gas fireplace. Floor-to-ceiling windows across the entire back wall with panoramic lake views.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Gas Fireplace</span><span class="rc-amenity">Vaulted Ceiling</span><span class="rc-amenity">Lake Views</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#127859; Chef's Kitchen</h4></div>
+            <p>Thermador double ovens with warming drawer, dual Subzero refrigerators, two sinks, two dishwashers, walk-in pantry, beverage fridge, and bar seating.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Dual Subzero</span><span class="rc-amenity">Thermador</span><span class="rc-amenity">Walk-in Pantry</span><span class="rc-amenity">Bar Seating</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#128218; Waterside Study</h4></div>
+            <p>Private study with French doors, its own balcony overlooking the lake. Perfect for morning coffee or watching the sunset.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Private Balcony</span><span class="rc-amenity">French Doors</span><span class="rc-amenity">Lake Views</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#127770; Family Room</h4></div>
+            <p>Sunlit room with beautiful French doors. Opens to the main living area. Cozy spot for reading, board games, or just hanging out.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- UPPER LEVEL -->
+    <div class="floor-content" id="floor-upper">
+      <div class="floor-layout">
+        <div class="floor-plan-wrap">
+          <svg viewBox="0 0 460 300" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:460px;">
+            <rect x="0" y="0" width="460" height="300" rx="12" fill="#f0f8fb"/>
+            <text x="230" y="20" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" fill="#5a727d">UPPER LEVEL &mdash; Lake Side &#8593;</text>
+            <!-- Primary Suite -->
+            <rect x="20" y="35" width="200" height="120" rx="6" fill="#d4ecf5" stroke="#1b6b8a" stroke-width="2"/>
+            <text x="120" y="75" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" font-weight="700" fill="#0e4257">Primary Suite</text>
+            <text x="120" y="92" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Gas fireplace &bull; Jacuzzi tub</text>
+            <text x="120" y="106" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Dual walk-in closets &amp; vanities</text>
+            <text x="120" y="120" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Walk-in glass shower</text>
+            <!-- Catwalk -->
+            <rect x="225" y="70" width="15" height="50" rx="3" fill="#f5e6c8"/>
+            <text x="232" y="100" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="7" fill="#5a727d" transform="rotate(-90,232,100)">Catwalk</text>
+            <!-- Bedroom 2 -->
+            <rect x="250" y="35" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="295" y="65" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 2</text>
+            <text x="295" y="80" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Walk-in closet</text>
+            <!-- Bedroom 3 -->
+            <rect x="350" y="35" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="395" y="65" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 3</text>
+            <text x="395" y="80" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Walk-in closet</text>
+            <!-- Bedroom 4 -->
+            <rect x="250" y="120" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="295" y="150" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 4</text>
+            <text x="295" y="165" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Walk-in closet</text>
+            <!-- Bedroom 5 -->
+            <rect x="350" y="120" width="90" height="75" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="395" y="150" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Bedroom 5</text>
+            <text x="395" y="165" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Ensuite bath</text>
+            <!-- Bath -->
+            <rect x="250" y="205" width="190" height="40" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
+            <text x="345" y="228" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Full Bath (dual vanities) &bull; 2nd Laundry Room</text>
+            <!-- Staircase -->
+            <rect x="20" y="170" width="100" height="40" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
+            <text x="70" y="194" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Staircase down</text>
+            <rect x="0" y="0" width="460" height="6" rx="3" fill="#3da5c2" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="floor-rooms">
+          <div class="room-card">
+            <div class="rc-header"><h4>&#128081; Primary Suite</h4><span class="rc-badge">Master</span></div>
+            <p>The entire lake-facing wing. Gas fireplace, jacuzzi tub, dual walk-in closets, dual vanities, and a large shared walk-in glass shower. Incredible natural light.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Gas Fireplace</span><span class="rc-amenity">Jacuzzi Tub</span><span class="rc-amenity">Dual Closets</span><span class="rc-amenity">Glass Shower</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#128716; Bedroom 2</h4></div>
+            <p>Large bedroom with walk-in closet. Shares the full bath with dual vanities across the catwalk.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Shared Full Bath</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#128716; Bedroom 3</h4></div>
+            <p>Large bedroom with walk-in closet. Access to the shared full bath with dual vanities.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Shared Full Bath</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#128716; Bedroom 4</h4></div>
+            <p>Large bedroom with walk-in closet. Connected to the catwalk overlooking the main level living room.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Catwalk Views</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#128716; Bedroom 5</h4><span class="rc-badge">Ensuite</span></div>
+            <p>Large bedroom with its own private ensuite bathroom and walk-in closet. Great for guests who want privacy.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Ensuite Bath</span><span class="rc-amenity">Walk-in Closet</span><span class="rc-amenity">Private</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- WALKOUT BASEMENT -->
+    <div class="floor-content" id="floor-lower">
+      <div class="floor-layout">
+        <div class="floor-plan-wrap">
+          <svg viewBox="0 0 460 260" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:460px;">
+            <rect x="0" y="0" width="460" height="260" rx="12" fill="#f0f8fb"/>
+            <text x="230" y="20" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" fill="#5a727d">WALKOUT BASEMENT &mdash; Lake Side &#8593;</text>
+            <!-- Main space -->
+            <rect x="20" y="35" width="260" height="100" rx="6" fill="#d4ecf5" stroke="#1b6b8a" stroke-width="1.5"/>
+            <text x="150" y="70" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="12" font-weight="600" fill="#0e4257">Great Room / Rec Area</text>
+            <text x="150" y="87" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Fireplace &bull; Floor-to-ceiling lake views</text>
+            <text x="150" y="101" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Wall-to-wall windows</text>
+            <!-- Kitchen -->
+            <rect x="290" y="35" width="150" height="55" rx="6" fill="#faf3e6" stroke="#f5e6c8" stroke-width="1.5"/>
+            <text x="365" y="60" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Full Kitchen</text>
+            <text x="365" y="75" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Second full kitchen</text>
+            <!-- Flex / 6th BR -->
+            <rect x="290" y="100" width="150" height="55" rx="6" fill="#eef5f7" stroke="#d4ecf5" stroke-width="1.5"/>
+            <text x="365" y="122" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#0e4257">Gym / Bedroom 6</text>
+            <text x="365" y="137" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="8" fill="#5a727d">Flex room</text>
+            <!-- Storage -->
+            <rect x="20" y="145" width="130" height="50" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
+            <text x="85" y="174" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Storage</text>
+            <!-- Patio / Lake -->
+            <rect x="20" y="210" width="420" height="35" rx="6" fill="#3da5c2" opacity="0.15" stroke="#3da5c2" stroke-width="1" stroke-dasharray="4"/>
+            <text x="230" y="232" text-anchor="middle" font-family="Fredoka,sans-serif" font-size="10" font-weight="600" fill="#1b6b8a">Aggregate Patio &rarr; Grand Lawn &rarr; Lakefront (114 ft)</text>
+            <!-- Staircase markers -->
+            <rect x="160" y="145" width="70" height="50" rx="6" fill="white" stroke="#d4ecf5" stroke-width="1"/>
+            <text x="195" y="174" text-anchor="middle" font-family="Source Sans 3,sans-serif" font-size="9" fill="#5a727d">Stairs up (x2)</text>
+            <rect x="0" y="0" width="460" height="6" rx="3" fill="#3da5c2" opacity="0.4"/>
+          </svg>
+        </div>
+        <div class="floor-rooms">
+          <div class="room-card">
+            <div class="rc-header"><h4>&#127916; Great Room / Rec Area</h4></div>
+            <p>Spacious walkout level with another set of wall-to-wall floor-to-ceiling windows facing the lake. Gas fireplace. Perfect for movie nights, games, or overflow sleeping.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Gas Fireplace</span><span class="rc-amenity">Lake Views</span><span class="rc-amenity">Walkout Access</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#127859; Full Kitchen</h4></div>
+            <p>A complete second kitchen on the lower level. Great when multiple families are staying and everyone wants to cook at different times.</p>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#128170; Gym / Flex Room / Bedroom 6</h4><span class="rc-badge">Flex</span></div>
+            <p>Currently set up as a gym/flex room, but can serve as a 6th bedroom for overflow guests. Lots of versatility down here.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Flexible Use</span><span class="rc-amenity">Gym Setup</span><span class="rc-amenity">6th Sleeping Area</span></div>
+          </div>
+          <div class="room-card">
+            <div class="rc-header"><h4>&#127796; Patio &amp; Lakefront</h4></div>
+            <p>Walk right out to a huge aggregate patio, then the grand lawn slopes down to 114 feet of private lakefront. This is where summer happens.</p>
+            <div class="rc-amenities"><span class="rc-amenity">Large Patio</span><span class="rc-amenity">Grand Lawn</span><span class="rc-amenity">114 ft Frontage</span></div>
+          </div>
+        </div>
       </div>
     </div>
   </div>
@@ -1098,6 +1377,16 @@ async function loadWeather() {
   }
 }
 loadWeather();
+
+// ===== FLOOR TABS =====
+document.querySelectorAll('.floor-tab').forEach(function(tab) {
+  tab.addEventListener('click', function() {
+    document.querySelectorAll('.floor-tab').forEach(function(t) { t.classList.remove('active'); });
+    document.querySelectorAll('.floor-content').forEach(function(c) { c.classList.remove('active'); });
+    tab.classList.add('active');
+    document.getElementById('floor-' + tab.dataset.floor).classList.add('active');
+  });
+});
 
 // ===== MANUAL TABS =====
 document.querySelectorAll('.manual-tab').forEach(tab => {
