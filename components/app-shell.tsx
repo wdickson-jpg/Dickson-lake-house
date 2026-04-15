@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useRouter, usePathname } from "next/navigation";
 import { createClient } from "@/lib/supabase/client";
 import { BottomNav } from "./bottom-nav";
+import { InstallBanner } from "./install-banner";
 import type { User } from "@supabase/supabase-js";
 
 type FamilyMember = {
@@ -130,6 +131,9 @@ export function AppShell({ children }: { children: React.ReactNode }) {
 
       {/* Page content */}
       <main className="flex-1 overflow-y-auto">{children}</main>
+
+      {/* Install banner */}
+      <InstallBanner />
 
       {/* Bottom nav */}
       <BottomNav />
